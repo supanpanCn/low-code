@@ -36,7 +36,14 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "no-": "off",
+      "no-debugger":"off",
+      "no-console": "off",
+      "no-empty":"off",
+      "no-unused-vars":"off",
+      "vue/no-unused-components": "off"
+    }
   },
   "browserslist": [
     "> 1%",

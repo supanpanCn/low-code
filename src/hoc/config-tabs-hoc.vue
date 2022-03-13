@@ -24,7 +24,7 @@ export default {
 .configTabsHoc {
   width: 100%;
   height: 100%;
-  /deep/ .el-tabs__nav.is-top {
+  :deep .el-tabs__nav.is-top {
     width: 100%;
     .el-tabs__item{
         width: 50%;
