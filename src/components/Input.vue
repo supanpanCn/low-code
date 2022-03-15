@@ -1,5 +1,5 @@
 <template>
-  <el-input v-bind="$attrs" data-id="uiInput"></el-input>
+  <el-input data-id="uiInput"></el-input>
 </template>
 <script>
 export default {

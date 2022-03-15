@@ -1,15 +1,42 @@
 import UiContainer from '../components/Container'
 import { bindActiveEvent } from '../utils/index'
+import {Observer,Center} from '../utils/observe'
 export default {
     name:'enchanceUiContainer',
+    props:{
+        renderSlot:{
+            type:Function,
+            default:()=>{}
+        }
+    },
     components:{
         UiContainer
     },
+    data() {
+        return {
+            draging:false
+        }
+    },
+    methods: {
+        updateDraging(dragStatus){
+            this.draging = dragStatus
+        }
+    },
+    mounted() {
+        new Observer(this,Center.getInstance())
+    },
     render() {
-        // 发布订阅者模式，接收拖拽通知，高亮显示
+        console.log(this.renderSlot(),'this',)
         const _props = {
+            draging:this.draging,
+            onDragover:()=>{
+                // console.log('炸')
+            },
             ...bindActiveEvent(this)
         }
-        return <UiContainer {..._props}/>
+        return <UiContainer {..._props}>
+            {/* 怎么接收到slot的内容传递下去？ */}
+            {/* {this.renderSlot()} */}
+        </UiContainer>
     },
 }

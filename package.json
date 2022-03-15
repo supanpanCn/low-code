@@ -14,6 +14,7 @@
     "vue-router": "^4.0.13"
   },
   "devDependencies": {
+    "@vue/babel-plugin-jsx": "^1.1.1",
     "@vue/cli-plugin-babel": "~4.5.6",
     "@vue/cli-plugin-eslint": "~4.5.6",
     "@vue/cli-service": "~4.5.6",
@@ -38,10 +39,10 @@
     },
     "rules": {
       "no-": "off",
-      "no-debugger":"off",
+      "no-debugger": "off",
       "no-console": "off",
-      "no-empty":"off",
-      "no-unused-vars":"off",
+      "no-empty": "off",
+      "no-unused-vars": "off",
       "vue/no-unused-components": "off"
     }
   },

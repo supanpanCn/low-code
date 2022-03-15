@@ -6,5 +6,4 @@ const uiComponents = componentsName.reduce((components, module) => {
   components[mod.default.name] = mod.default
   return components
 }, {})
-console.log(parsers,'parsers')
 export { uiComponents, parsers }

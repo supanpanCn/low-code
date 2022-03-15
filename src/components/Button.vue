@@ -1,5 +1,5 @@
 <template>
-  <el-button v-bind="$attrs" data-id="uiButton">{{ text }}</el-button>
+  <el-button data-id="uiButton">{{ text }}</el-button>
 </template>
 <script>
 export default {
@@ -10,5 +10,8 @@ export default {
           default:'确认'
       }
   },
+  mounted(){
+      console.log(this.$attrs,'this.$attrs')
+  }
 };
 </script>

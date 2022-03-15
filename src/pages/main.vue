@@ -10,15 +10,11 @@
     <el-row class="mainBox">
       <!-- 物料堆 -->
       <el-col :span="3">
-        <Stock @pick-component="(name) => (pickingComponentName = name)" />
+        <Stock />
       </el-col>
       <!-- 画布 -->
       <el-col :span="15">
-        <CanvasArea
-          @dragover.prevent
-          @drop="handleDropOver"
-          :json="jsonSchema"
-        />
+        <CanvasArea :json="jsonSchema" @drop="handleDrop" @dragover.prevent />
       </el-col>
       <!-- 控制面板 -->
       <el-col :span="6">
@@ -39,11 +35,10 @@ export default {
   name: "Main",
   data() {
     return {
-      pickingComponentName: null,
       jsonSchema: {
         componentsTree: {
           type: "root",
-          children: [],
+          children: [1],
         },
         layout: {},
         query: undefined,
@@ -51,22 +46,18 @@ export default {
     };
   },
   methods: {
-    handleDropOver(e) {
+    handleDrop(e) {
       const { componentsTree: tree } = this.jsonSchema;
       const { children } = tree;
       // 判断是否存在交互组件
-      let node = e.target;
-      let hasRoot = false;
-      if (node.dataset.id === uiFlag.ROOT) {
-        for (let i = 0; i < node.children.length; i++) {
-          let v = node.children[i];
-          if (v.dataset.id === uiFlag.CONTAINER) {
-            hasRoot = true;
-            break;
-          }
+      const uiName = e.dataTransfer.getData("ui-component-name");
+      if (uiName !== uiFlag.CONTAINER) {
+        if (Array.isArray(children) && children.length === 0) {
+          ElMessage.warning("请选择交互组件");
+          return;
         }
-      } else {
-        hasRoot = true
+        let node = e.target;
+        let hasRoot = true;
         while (
           node.dataset.id !== uiFlag.CONTAINER &&
           node.dataset.id !== uiFlag.ROOT
@@ -74,20 +65,31 @@ export default {
           node = node.parentNode;
         }
         if (node.dataset.id === uiFlag.ROOT) {
-          hasRoot = false
+          hasRoot = false;
+        }
+        if (!hasRoot) {
+          ElMessage.warning("请选择交互组件");
+          return;
         }
       }
-      if (!hasRoot) {
-        ElMessage.warning("请选择交互组件");
-        return
+      // 组装schema
+      const item = {
+        type: uiName,
+        children: [],
+      };
+      let node = e.target;
+      let depth = 0
+      while (node.dataset.id !== uiFlag.ROOT) {
+        if(node.dataset.id === uiFlag.CONTAINER){
+          depth++
+          console.log(node.getAttribute('pIndex'))
+        }
+        
+        node = node.parentNode;
       }
+      console.log(depth,'深度')
 
-      //
-      // if(e.target.className === 'el-empty' && this.pickingComponentName !== 'uiContainer'){
-      //   ElMessage.warning('请选择交互组件')
-      //   return
-      // }
-      // tree.
+      children.push(item);
     },
   },
   components: {
