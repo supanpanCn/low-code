@@ -2,7 +2,6 @@
   <div class="appWrapper">
     <router-view/>
   </div>
-  
 </template>
 
 <script>
