@@ -84,11 +84,9 @@ export default {
           depth++
           console.log(node.getAttribute('pIndex'))
         }
-        
         node = node.parentNode;
       }
       console.log(depth,'深度')
-
       children.push(item);
     },
   },
