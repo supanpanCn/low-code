@@ -25,7 +25,6 @@ export default {
         new Observer(this,Center.getInstance())
     },
     render() {
-        console.log(this.renderSlot(),'this',)
         const _props = {
             draging:this.draging,
             onDragover:()=>{
@@ -34,8 +33,7 @@ export default {
             ...bindActiveEvent(this)
         }
         return <UiContainer {..._props}>
-            {/* 怎么接收到slot的内容传递下去？ */}
-            {/* {this.renderSlot()} */}
+            {this.$slots.default && this.$slots.default()}
         </UiContainer>
     },
 }

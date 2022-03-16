@@ -1,3 +1,4 @@
+import { ElMessage } from 'element-plus';
 const uiMap = {
     uiButton: '按钮',
     uiContainer: '交互组件',
@@ -33,4 +34,50 @@ export const hasLen = (p) => {
 export const uiFlag = {
     ROOT: 'canvas',
     CONTAINER: 'uiContainer'
+}
+// 消息提示
+export const showMsg = (msg, type = 'warning') => {
+    ElMessage[type](msg)
+}
+// 校验是否存在交互组件
+export const validiteHasContainer = (e, uiName, children) => {
+    if (uiName !== uiFlag.CONTAINER) {
+        if (Array.isArray(children) && children.length === 0) {
+            showMsg('请选择交互组件');
+            return false;
+        }
+        let node = e.target;
+        let hasRoot = true;
+        while (node.dataset.id !== uiFlag.CONTAINER && node.dataset.id !== uiFlag.ROOT) {
+            node = node.parentNode;
+        }
+        if (node.dataset.id === uiFlag.ROOT) {
+            hasRoot = false;
+        }
+        if (!hasRoot) {
+            showMsg('请选择交互组件');
+            return false;
+        }
+    }
+    return true;
+}
+// 默认节点类型
+export const createNode = (nodeName) => {
+    return {
+        type: nodeName,
+        children: [],
+    };
+}
+// 获取节点深度
+export const getDepth = (e) => {
+    let node = e.target;
+    let targetIndex = -1
+    while (node.dataset.id !== uiFlag.ROOT) {
+        if (node.dataset.id === uiFlag.CONTAINER) {
+            const t = node.getAttribute("p-index")
+            targetIndex = targetIndex != -1 ? targetIndex : t
+        }
+        node = node.parentNode;
+    }
+    return targetIndex
 }
