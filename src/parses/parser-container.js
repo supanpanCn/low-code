@@ -1,6 +1,5 @@
-import UiContainer from '../components/Container'
-import { bindActiveEvent } from '../utils/index'
-import {Observer,Center} from '../utils/observe'
+import UiContainer from 'ui/Container'
+import { bindActiveEvent,Observer,Center } from '~utils'
 export default {
     name:'enchanceUiContainer',
     props:{

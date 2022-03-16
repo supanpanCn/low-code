@@ -1,5 +1,5 @@
-import uiInput from '../components/Input'
-import { bindActiveEvent } from '../utils/index'
+import uiInput from 'ui/Input'
+import { bindActiveEvent } from '~utils'
 export default {
     name: 'enchanceUiInput',
     components: {
