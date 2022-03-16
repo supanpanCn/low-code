@@ -14,7 +14,7 @@
       </el-col>
       <!-- 画布 -->
       <el-col :span="15">
-        <CanvasArea :json="jsonSchema" @drop="handleDrop" @dragover.prevent />
+        <CanvasArea :jsonSchema="jsonSchema" @drop="handleDrop" @dragover.prevent />
       </el-col>
       <!-- 控制面板 -->
       <el-col :span="6">
@@ -25,74 +25,99 @@
 </template>
 
 <script>
-import TopBar from './../fragments/main/topBar';
-import Stock from '../fragments/main/stock.vue';
-import CanvasArea from '../fragments/main/canvasArea.vue';
-import ConfigWrapper from '../fragments/main/configWrapper.vue';
-import { ElMessage } from 'element-plus';
-import { uiFlag } from '~utils';
+import TopBar from "./../fragments/main/topBar";
+import Stock from "../fragments/main/stock.vue";
+import CanvasArea from "../fragments/main/canvasArea.vue";
+import ConfigWrapper from "../fragments/main/configWrapper.vue";
+import {
+  uiFlag,
+  showMsg,
+  validiteHasContainer,
+  createNode,
+  getDepth
+} from "~utils";
 export default {
-  name: 'Main',
+  name: "Main",
   data() {
     return {
       jsonSchema: {
         componentsTree: {
-          type: 'root',
-          children: [1],
+          // ...createNode("root")
+          type: "root",
+          children: [
+            {
+              type: "Container",
+              children: []
+            },
+            {
+              type: "Container",
+              children: []
+            },
+            {
+              type: "Container",
+              children: []
+            },
+            {
+              type: "Container",
+              children: [
+                {
+                  type: "Container",
+                  children: [
+                    {
+                      type: "Container",
+                      children: [5]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         layout: {},
-        query: undefined,
-      },
+        query: undefined
+      }
     };
   },
   methods: {
+    combineSchema(infos, node, uiName) {
+      function _find(children, infos, res) {
+        for (let i = 0; i < children.length; i++) {
+          let k = infos.shift();
+          if (k == i) {
+            res.push(children[i]);
+            _find(children[i].children, infos, res);
+            break;
+          }
+        }
+      }
+      const res = [node.children];
+      infos.length && _find(node.children, infos, res);
+      const target = res.pop();
+      if (!Array.isArray(target.children)) {
+        target.children = [];
+      }
+      target.children.push(createNode(uiName));
+    },
     handleDrop(e) {
       const { componentsTree: tree } = this.jsonSchema;
       const { children } = tree;
       // 判断是否存在交互组件
-      const uiName = e.dataTransfer.getData('ui-component-name');
-      if (uiName !== uiFlag.CONTAINER) {
-        if (Array.isArray(children) && children.length === 0) {
-          ElMessage.warning('请选择交互组件');
-          return;
-        }
-        let node = e.target;
-        let hasRoot = true;
-        while (node.dataset.id !== uiFlag.CONTAINER && node.dataset.id !== uiFlag.ROOT) {
-          node = node.parentNode;
-        }
-        if (node.dataset.id === uiFlag.ROOT) {
-          hasRoot = false;
-        }
-        if (!hasRoot) {
-          ElMessage.warning('请选择交互组件');
-          return;
-        }
-      }
+      const uiName = e.dataTransfer.getData("ui-component-name");
+      if (!validiteHasContainer(e, uiName, children)) return;
+      // 获取节点深度
+      const targetIndex = getDepth(e);
       // 组装schema
-      const item = {
-        type: uiName,
-        children: [],
-      };
-      let node = e.target;
-      let depth = 0;
-      while (node.dataset.id !== uiFlag.ROOT) {
-        if (node.dataset.id === uiFlag.CONTAINER) {
-          depth++;
-          console.log(node.getAttribute('pIndex'));
-        }
-        node = node.parentNode;
-      }
-      console.log(depth, '深度');
-      children.push(item);
-    },
+      const infos =
+        targetIndex.indexOf("-") > -1 ? targetIndex.split("-") : [targetIndex];
+      this.combineSchema(infos, children[infos.shift()], uiName);
+    }
   },
   components: {
     TopBar,
     Stock,
     CanvasArea,
-    ConfigWrapper,
-  },
+    ConfigWrapper
+  }
 };
 </script>
 

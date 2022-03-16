@@ -14,76 +14,45 @@
         </enchanceUiContainer>
       </template>
     </enchanceUiContainer>
-    <enchanceUiButton type="primary" /> -->
+    <enchanceUiButton type="primary" /> 
+    
+    <renderEngine :jsonSchema="jsonSchema"></renderEngine>
+    -->
+    <enchanceUiContainer pIndex="0" />
+    <enchanceUiContainer pIndex="1" />
+    <enchanceUiContainer pIndex="2">55555</enchanceUiContainer>
+    <enchanceUiContainer pIndex="3">
+      <enchanceUiContainer pIndex="3-0">
+        <enchanceUiContainer pIndex="3-0-0">3-1</enchanceUiContainer>
+      </enchanceUiContainer>
+    </enchanceUiContainer>
+    <enchanceUiButton type="primary" />
   </div>
 </template>
 
 <script>
-import { parsers } from "ui/index";
+import { parsers } from "ui";
 import { hasLen } from "~utils";
+import renderEngine from "~utils/renderEngine";
 export default {
   name: "canvasArea",
   props: {
-    json: {
-      type: Object,
-    },
+    jsonSchema: {
+      type: Object
+    }
   },
   data() {
     return {
       components: [],
-      isEmpty: hasLen(this.json.componentsTree.children) || true,
-      childs: [
-        {
-          type: "Container",
-          children: [
-            {
-              type: "Container",
-            },
-          ],
-        },
-      ],
+      isEmpty: hasLen(this.jsonSchema.componentsTree.children) || true
     };
   },
-  methods: {
-    getCh(pIndex) {
-      let res = [];
-      this.renderChildContainer(
-        pIndex,
-        [
-          {
-            type: "Container",
-            children: [
-              {
-                type: "Container",
-              },
-            ],
-          },
-        ],
-        res
-      );
-      console.log(res, "插入");
-    },
-    renderChildContainer(pIndex, children, arr) {
-      if (Array.isArray(children)) {
-        for (let i = 0; i < children.length; i++) {
-          let v = children[i];
-          arr.push(<enchanceUiContainer pIndex={pIndex + "-" + i} />);
-          this.renderChildContainer(v.children);
-        }
-      }
-    },
-  },
-  mounted() {
-    // console.log(parsers, "解析");
-    // for (let i = 0; i < this.childs.length; i++) {
-    //       let v = this.childs[i];
-    //       arr.push(<enchanceUiContainer pIndex={pIndex + "-" + i} />);
-    //       this.renderChildContainer(v.children);
-    //     }
-  },
+  methods: {},
+  mounted() {},
   components: {
     ...parsers,
-  },
+    renderEngine
+  }
 };
 </script>
 <style lang="less" scoped>
