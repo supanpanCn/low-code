@@ -14,9 +14,8 @@
 </template>
 
 <script>
-import { uiComponents } from "../../components/index.js";
-import { parseUiName } from "../../utils/index";
-import { Center } from "../../utils/observe";
+import { uiComponents } from "ui/index.js";
+import { parseUiName,Center } from "~utils";
 export default {
   name: "Stock",
   data() {

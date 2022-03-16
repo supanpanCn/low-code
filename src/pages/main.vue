@@ -25,19 +25,19 @@
 </template>
 
 <script>
-import TopBar from "./../fragments/main/topBar";
-import Stock from "../fragments/main/stock.vue";
-import CanvasArea from "../fragments/main/canvasArea.vue";
-import ConfigWrapper from "../fragments/main/configWrapper.vue";
-import { ElMessage } from "element-plus";
-import { uiFlag } from "../utils/index";
+import TopBar from './../fragments/main/topBar';
+import Stock from '../fragments/main/stock.vue';
+import CanvasArea from '../fragments/main/canvasArea.vue';
+import ConfigWrapper from '../fragments/main/configWrapper.vue';
+import { ElMessage } from 'element-plus';
+import { uiFlag } from '~utils';
 export default {
-  name: "Main",
+  name: 'Main',
   data() {
     return {
       jsonSchema: {
         componentsTree: {
-          type: "root",
+          type: 'root',
           children: [1],
         },
         layout: {},
@@ -50,25 +50,22 @@ export default {
       const { componentsTree: tree } = this.jsonSchema;
       const { children } = tree;
       // 判断是否存在交互组件
-      const uiName = e.dataTransfer.getData("ui-component-name");
+      const uiName = e.dataTransfer.getData('ui-component-name');
       if (uiName !== uiFlag.CONTAINER) {
         if (Array.isArray(children) && children.length === 0) {
-          ElMessage.warning("请选择交互组件");
+          ElMessage.warning('请选择交互组件');
           return;
         }
         let node = e.target;
         let hasRoot = true;
-        while (
-          node.dataset.id !== uiFlag.CONTAINER &&
-          node.dataset.id !== uiFlag.ROOT
-        ) {
+        while (node.dataset.id !== uiFlag.CONTAINER && node.dataset.id !== uiFlag.ROOT) {
           node = node.parentNode;
         }
         if (node.dataset.id === uiFlag.ROOT) {
           hasRoot = false;
         }
         if (!hasRoot) {
-          ElMessage.warning("请选择交互组件");
+          ElMessage.warning('请选择交互组件');
           return;
         }
       }
@@ -78,15 +75,15 @@ export default {
         children: [],
       };
       let node = e.target;
-      let depth = 0
+      let depth = 0;
       while (node.dataset.id !== uiFlag.ROOT) {
-        if(node.dataset.id === uiFlag.CONTAINER){
-          depth++
-          console.log(node.getAttribute('pIndex'))
+        if (node.dataset.id === uiFlag.CONTAINER) {
+          depth++;
+          console.log(node.getAttribute('pIndex'));
         }
         node = node.parentNode;
       }
-      console.log(depth,'深度')
+      console.log(depth, '深度');
       children.push(item);
     },
   },

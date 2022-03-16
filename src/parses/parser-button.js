@@ -1,5 +1,5 @@
-import uiButton from '../components/Button.vue'
-import { bindActiveEvent } from '../utils/index'
+import uiButton from 'ui/Button.vue'
+import { bindActiveEvent } from '~utils'
 export default {
     name:'enchanceUiButton',
     components:{

@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import { parsers } from "./../../components/index";
-import { hasLen } from "../../utils/index";
+import { parsers } from "ui/index";
+import { hasLen } from "~utils";
 export default {
   name: "canvasArea",
   props: {
@@ -74,12 +74,12 @@ export default {
     },
   },
   mounted() {
-    console.log(parsers, "解析");
-    for (let i = 0; i < this.childs.length; i++) {
-          let v = this.childs[i];
-          arr.push(<enchanceUiContainer pIndex={pIndex + "-" + i} />);
-          this.renderChildContainer(v.children);
-        }
+    // console.log(parsers, "解析");
+    // for (let i = 0; i < this.childs.length; i++) {
+    //       let v = this.childs[i];
+    //       arr.push(<enchanceUiContainer pIndex={pIndex + "-" + i} />);
+    //       this.renderChildContainer(v.children);
+    //     }
   },
   components: {
     ...parsers,
