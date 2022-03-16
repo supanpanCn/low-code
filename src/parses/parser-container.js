@@ -1,39 +1,22 @@
 import UiContainer from 'ui/Container'
-import { bindActiveEvent,Observer,Center } from '~utils'
+import { bindActiveEvent } from '~utils'
 export default {
-    name:'enchanceUiContainer',
-    props:{
-        renderSlot:{
-            type:Function,
-            default:()=>{}
-        }
+    name: 'enchanceUiContainer',
+    props: {
     },
-    components:{
+    components: {
         UiContainer
     },
-    data() {
-        return {
-            draging:false
-        }
-    },
-    methods: {
-        updateDraging(dragStatus){
-            this.draging = dragStatus
-        }
-    },
-    mounted() {
-        new Observer(this,Center.getInstance())
-    },
-    render() {
+    render(_, tree, children) {
+        this.schame = tree
         const _props = {
-            draging:this.draging,
-            onDragover:()=>{
+            onDragover: () => {
                 // console.log('炸')
             },
             ...bindActiveEvent(this)
         }
         return <UiContainer {..._props}>
-            {this.$slots.default && this.$slots.default()}
+            {children}
         </UiContainer>
     },
 }

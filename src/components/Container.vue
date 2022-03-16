@@ -10,19 +10,28 @@
   </div>
 </template>
 <script>
+import { Observer, Center } from "~utils";
 export default {
   name: "uiContainer",
   props: {
-    draging: {
-      type: Boolean,
-      default: false,
-    },
     pIndex: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: "0",
+    },
+  },
+  data() {
+    return {
+      draging: false,
+      schame: null,
+    };
+  },
+  methods: {
+    updateDraging(dragStatus) {
+      this.draging = dragStatus;
     },
   },
   mounted() {
+    new Observer(this, Center.getInstance());
   },
 };
 </script>
