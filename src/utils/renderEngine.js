@@ -29,6 +29,7 @@ export default {
             this.tree = componentsTree
         },
         renderTree(tree,h){
+            debugger
             let _children = null
             if(Array.isArray(tree.children) && tree.children.length){
                 _children = this.renderChildren(tree,h)

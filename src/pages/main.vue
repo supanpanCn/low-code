@@ -14,7 +14,7 @@
       </el-col>
       <!-- 画布 -->
       <el-col :span="15">
-        <CanvasArea :jsonSchema="jsonSchema" @drop="handleDrop" @dragover.prevent />
+        <CanvasArea :jsonSchema="jsonSchema" :updateKey="updateKey" @drop="handleDrop"/>
       </el-col>
       <!-- 控制面板 -->
       <el-col :span="6">
@@ -30,86 +30,58 @@ import Stock from "../fragments/main/stock.vue";
 import CanvasArea from "../fragments/main/canvasArea.vue";
 import ConfigWrapper from "../fragments/main/configWrapper.vue";
 import {
-  validiteHasContainer,
   createNode,
-  getDepth,
-  createInitialSchame
+  createInitialSchame,
+  getUuid,
+  getNearestContainerId,
+  uiFlag,
+  showMsg
 } from "~utils";
 export default {
   name: "Main",
   data() {
     return {
-      jsonSchema:createInitialSchame(),
-      // jsonSchema: {
-      //   componentsTree: {
-          // ...createNode("root")
-          // type: "Container",
-          // children: [
-          //   {
-          //     type: "Container",
-          //     children: []
-          //   },
-          //   {
-          //     type: "Container",
-          //     children: []
-          //   },
-          //   {
-          //     type: "Container",
-          //     children: []
-          //   },
-          //   {
-          //     type: "Container",
-          //     children: [
-          //       {
-          //         type: "Container",
-          //         children: [
-          //           {
-          //             type: "Container",
-          //             children: []
-          //           }
-          //         ]
-          //       }
-          //     ]
-          //   }
-          // ]
-        // },
-        // layout: {},
-        // query: undefined
-      // }
+      jsonSchema: createInitialSchame(),
+      updateKey:0
     };
   },
   methods: {
-    combineSchema(infos, node, uiName) {
-      function _find(children, infos, res) {
-        for (let i = 0; i < children.length; i++) {
-          let k = infos.shift();
-          if (k == i) {
-            res.push(children[i]);
-            _find(children[i].children, infos, res);
-            break;
-          }
-        }
-      }
-      const res = [node.children];
-      infos.length && _find(node.children, infos, res);
-      const target = res.pop();
-      if (!Array.isArray(target.children)) {
-        target.children = [];
-      }
-      target.children.push(createNode(uiName));
-    },
     handleDrop(e) {
       const { componentsTree: tree } = this.jsonSchema;
-      const { children } = tree;
       // 判断是否存在交互组件
       const uiName = e.dataTransfer.getData("ui-component-name");
-      if (!validiteHasContainer(e, uiName, children)) return;
-      // 获取节点深度
-      const targetIndex = getDepth(e);
+      if(!tree.type && uiName !== uiFlag.CONTAINER){
+        showMsg('请选择交互组件');
+        return
+      }
       // 组装schema
-      const infos =
-        targetIndex.indexOf("-") > -1 ? targetIndex.split("-") : [targetIndex];
-      this.combineSchema(infos, children[infos.shift()], uiName);
+      if (!tree.type) { //根节点
+        tree.type='Container'
+        tree.uid = getUuid()
+        tree.children = []
+      } else {
+        const uid = getNearestContainerId(e)
+        const stack = [tree]
+        let schameNode = null
+        while(stack.length){
+          const node = stack.shift()
+          if(node.uid === uid){
+            stack.length = 0
+            schameNode = node
+          }else{
+            if(Array.isArray(node.children)){
+              for(let i=0;i<node.children.length;i++){
+                stack.push(node.children[i])
+              }
+            }
+          }
+        }
+        if(!Array.isArray(schameNode.children)){
+          schameNode.children = []
+        }
+        schameNode.children.push(createNode(uiName.slice(2)))
+      }
+      this.updateKey++
     }
   },
   components: {
@@ -130,6 +102,12 @@ export default {
   }
   .mainBox {
     height: calc(100% - 50px);
+    #app{
+      height: 100%;
+      :deep >.uiContainer:nth-of-type(1){
+        height: 100%;
+      }
+    }
   }
 }
 </style>
