@@ -39,6 +39,11 @@ import {
 } from "~utils";
 export default {
   name: "Main",
+  provide(){
+    return {
+      removeNode:this.handleRemoveNode
+    }
+  },
   data() {
     return {
       jsonSchema: createInitialSchame(),
@@ -46,6 +51,21 @@ export default {
     };
   },
   methods: {
+    handleRemoveNode(uid){
+      const { componentsTree: tree } = this.jsonSchema;
+      function del(node){
+        for(let i=0;i<node.length;i++){
+          if(node[i].uid === uid){
+            node.splice(i,1)
+            break
+          }else{
+            del(node[i].children)
+          }
+        }
+      }
+      del(tree.children)
+      this.updateKey++
+    },
     handleDrop(e) {
       const { componentsTree: tree } = this.jsonSchema;
       // 判断是否存在交互组件
@@ -58,6 +78,7 @@ export default {
       if (!tree.type) { //根节点
         tree.type='Container'
         tree.uid = getUuid()
+        tree.isRoot = true
         tree.children = []
       } else {
         const uid = getNearestContainerId(e)
@@ -106,6 +127,8 @@ export default {
       height: 100%;
       :deep >.uiContainer:nth-of-type(1){
         height: 100%;
+        box-sizing: border-box;
+        padding-top: 20px;
       }
     }
   }

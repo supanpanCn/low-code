@@ -7,7 +7,12 @@ export default {
     },
     render() {
         const _props = {
-            ...bindActiveEvent(this)
+            // ...bindActiveEvent(this)
+            onclick:(e)=>{
+                console.log('知道')
+                // e.stopPropagation();
+                
+            }
         }
         return <uiButton {..._props}/>
     },
