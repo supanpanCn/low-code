@@ -40,50 +40,21 @@ export const uiFlag = {
 export const showMsg = (msg, type = 'warning') => {
     ElMessage[type](msg)
 }
-// 校验是否存在交互组件
-export const validiteHasContainer = (e, uiName, children) => {
-    if (uiName !== uiFlag.CONTAINER) {
-        if (Array.isArray(children) && children.length === 0) {
-            showMsg('请选择交互组件');
-            return false;
-        }
-        let node = e.target;
-        let hasRoot = true;
-        while (node.dataset.id !== uiFlag.CONTAINER && node.dataset.id !== uiFlag.ROOT) {
-            node = node.parentNode;
-        }
-        if (node.dataset.id === uiFlag.ROOT) {
-            hasRoot = false;
-        }
-        if (!hasRoot) {
-            showMsg('请选择交互组件');
-            return false;
-        }
-    }
-    return true;
-}
 // 默认节点类型
 export const createNode = (nodeName) => {
     return {
         type: nodeName,
         children: [],
+        uid:getUuid()
     };
 }
-// 获取节点深度
-export const getDepth = (e) => {
-    let node = e.target;
-    let targetIndex = 0
-    if (node.dataset.id === 'empty') {
-        return String(targetIndex)
+// 获取交互组件
+export const getNearestContainerId = (e) => {
+    let node = e.target
+    while(!node.className.includes(uiFlag.CONTAINER)){
+        node = node.parentNode
     }
-    while (node.dataset.id !== uiFlag.ROOT) {
-        if (node.dataset.id === uiFlag.CONTAINER) {
-            const t = node.getAttribute("p-index")
-            targetIndex = targetIndex != -1 ? targetIndex : t
-        }
-        node = node.parentNode;
-    }
-    return String(targetIndex)
+    return node.getAttribute('uid')
 }
 //获取url参数
 export const parseUrlParams = (params) => {
@@ -96,4 +67,18 @@ export const createInitialSchame = () => {
         layout: {},
         query: undefined
     }
-} 
+}
+// 生成唯一标识id
+export const getUuid = () => {
+    var d = new Date().getTime();
+    if (window.performance && typeof window.performance.now === 'function') {
+        d += performance.now();
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
+    });
+    return uuid;
+}
+

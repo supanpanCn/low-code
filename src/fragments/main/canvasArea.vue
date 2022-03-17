@@ -1,14 +1,9 @@
 <template>
-  <div class="canvasBox">
-    <el-empty
-      description="请拖拽到此"
-      v-if="!isEmpty"
-    ></el-empty>
-    <div class="empty" data-id="empty" v-if="!isEmpty"></div>
-    <div class="canvasWrapper" data-id="canvas" v-else>
-      <renderEngine :jsonSchema="jsonSchema"></renderEngine>
-    </div>
+  <div class="emptyBox" v-if="!isEmpty">
+    <el-empty description="请拖拽到此"></el-empty>
+    <div class="empty" data-id="empty" @dragover.prevent></div>
   </div>
+  <renderEngine :jsonSchema="jsonSchema" v-else></renderEngine>
 </template>
 
 <script>
@@ -19,39 +14,48 @@ export default {
   name: "canvasArea",
   props: {
     jsonSchema: {
-      type: Object,
+      type: Object
     },
+    updateKey:{
+      type:Number,
+      default:0
+    }
   },
   data() {
     return {
       components: [],
-      isEmpty: hasLen(this.jsonSchema.componentsTree.children),
+      isEmpty: hasLen(this.jsonSchema.componentsTree)
     };
   },
-  methods: {},
-  mounted() {},
+  updated() {
+    this.isEmpty = hasLen(this.jsonSchema.componentsTree);
+  },
   components: {
     ...parsers,
-    renderEngine,
-  },
+    renderEngine
+  }
 };
 </script>
 <style lang="less" scoped>
-.canvasBox {
+.canvasWrapper {
+  // width: 100%;
+  // height: 100%;
+  // position: relative;
+  // z-index: 99;
+  // background-color: #ccc;
+}
+.emptyBox{
   width: 100%;
   height: 100%;
   position: relative;
-  .canvasWrapper {
-    width: 100%;
-    height: 100%;
-  }
   .empty {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-  }
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
+}
+
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div
-    class="uiContainer"
-    :class="{ draging: draging }"
+    :class="{ draging: draging,uiContainer:true }"
     :p-index="pIndex"
+    :uid="uid"
     data-id="uiContainer"
     @dragover.prevent
   >
@@ -16,23 +16,27 @@ export default {
   props: {
     pIndex: {
       type: String,
-      default: "0",
+      default: "0"
     },
+    id: {
+      type: String,
+      default: "-1"
+    }
   },
   data() {
     return {
       draging: false,
-      schame: null,
+      schame: null
     };
   },
   methods: {
     updateDraging(dragStatus) {
       this.draging = dragStatus;
-    },
+    }
   },
   mounted() {
     new Observer(this, Center.getInstance());
-  },
+  }
 };
 </script>
 <style lang="less" scoped>

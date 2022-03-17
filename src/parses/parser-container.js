@@ -1,5 +1,5 @@
 import UiContainer from 'ui/Container'
-import { bindActiveEvent } from '~utils'
+import { bindActiveEvent,getUuid } from '~utils'
 export default {
     name: 'enchanceUiContainer',
     props: {
@@ -9,7 +9,9 @@ export default {
     },
     render(_, tree, children) {
         this.schame = tree
+        const {uid=getUuid()} = tree
         const _props = {
+            uid,
             onDragover: () => {
                 // console.log('炸')
             },
