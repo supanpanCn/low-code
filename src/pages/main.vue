@@ -30,52 +30,52 @@ import Stock from "../fragments/main/stock.vue";
 import CanvasArea from "../fragments/main/canvasArea.vue";
 import ConfigWrapper from "../fragments/main/configWrapper.vue";
 import {
-  uiFlag,
-  showMsg,
   validiteHasContainer,
   createNode,
-  getDepth
+  getDepth,
+  createInitialSchame
 } from "~utils";
 export default {
   name: "Main",
   data() {
     return {
-      jsonSchema: {
-        componentsTree: {
+      jsonSchema:createInitialSchame(),
+      // jsonSchema: {
+      //   componentsTree: {
           // ...createNode("root")
-          type: "root",
-          children: [
-            {
-              type: "Container",
-              children: []
-            },
-            {
-              type: "Container",
-              children: []
-            },
-            {
-              type: "Container",
-              children: []
-            },
-            {
-              type: "Container",
-              children: [
-                {
-                  type: "Container",
-                  children: [
-                    {
-                      type: "Container",
-                      children: [5]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        layout: {},
-        query: undefined
-      }
+          // type: "Container",
+          // children: [
+          //   {
+          //     type: "Container",
+          //     children: []
+          //   },
+          //   {
+          //     type: "Container",
+          //     children: []
+          //   },
+          //   {
+          //     type: "Container",
+          //     children: []
+          //   },
+          //   {
+          //     type: "Container",
+          //     children: [
+          //       {
+          //         type: "Container",
+          //         children: [
+          //           {
+          //             type: "Container",
+          //             children: []
+          //           }
+          //         ]
+          //       }
+          //     ]
+          //   }
+          // ]
+        // },
+        // layout: {},
+        // query: undefined
+      // }
     };
   },
   methods: {

@@ -1,48 +1,59 @@
 import { parsers } from "ui";
+import {parseUrlParams,createInitialSchame,uiPrefix} from '~utils'
 // 渲染引擎
 export default {
+    name: 'renderEngine',
     props: {
         jsonSchema: {
             type: Object,
             default: () => {
-                return {
-                    type: 'root',
-                    children: []
-                }
+                return createInitialSchame()
             }
+        },
+    },
+    data() {
+        return {
+            pageParams: null,
+            layout:null,
+            renderFunc:null
         }
     },
-    components:{
-        ...parsers
+    created() {
+         this.init()
     },
-    name: 'renderEngine',
     methods: {
-        renderLi(items){
-            const li = <div>li</div>
-            let ul = []
-            if(Array.isArray(items)){
-                ul = items.map(v=>{
-                    return this.renderLi(v.children)
-                })
-            }
-            return [li,...ul]
+        init(){
+            const {componentsTree,layout} = this.jsonSchema
+            this.pageParams = parseUrlParams(this.jsonSchema.query)
+            this.layout = layout
+            this.tree = componentsTree
         },
-        renderContainer(children) {
-            if (Array.isArray(children) && children.length) {
-                return children.map(v => {
-                    return <div>Container{this.renderLi(v.children)}</div>
-                })
+        renderTree(tree,h){
+            let _children = null
+            if(Array.isArray(tree.children) && tree.children.length){
+                _children = this.renderChildren(tree,h)
+            }
+            return this.renderRealComponent(tree,_children,h)
+        },
+        renderChildren(node,h){
+            let list = node.children || [].concat(node)
+            return list.map((v)=>this.renderTree(v,h))
+        },
+        renderRealComponent(tree,children,h){
+            const t = uiPrefix + tree.type
+            const realCom =  parsers[t]
+            if(realCom){
+                return realCom.render(h,tree,children)
             }
             return null
         }
     },
-    render() {
-        const { componentsTree } = this.jsonSchema
-        const { type: rootId, children } = componentsTree
-        console.log('children', children,parsers)
-        return <div id={rootId}>
-            {this.renderContainer(children)}
-            159
+    render(h) {
+        return <div id='app'>
+            {this.renderTree(this.tree,h)}
         </div>
-    }
+    },
+    components: {
+        ...parsers
+    },
 }

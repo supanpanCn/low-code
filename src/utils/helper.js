@@ -4,6 +4,7 @@ const uiMap = {
     uiContainer: '交互组件',
     uiInput: '输入框'
 }
+export const uiPrefix = 'enchanceUi'
 // 将组件name映射为中文
 export const parseUiName = (name) => {
     return uiMap[name]
@@ -71,7 +72,10 @@ export const createNode = (nodeName) => {
 // 获取节点深度
 export const getDepth = (e) => {
     let node = e.target;
-    let targetIndex = -1
+    let targetIndex = 0
+    if (node.dataset.id === 'empty') {
+        return String(targetIndex)
+    }
     while (node.dataset.id !== uiFlag.ROOT) {
         if (node.dataset.id === uiFlag.CONTAINER) {
             const t = node.getAttribute("p-index")
@@ -79,5 +83,17 @@ export const getDepth = (e) => {
         }
         node = node.parentNode;
     }
-    return targetIndex
+    return String(targetIndex)
 }
+//获取url参数
+export const parseUrlParams = (params) => {
+    return params
+}
+//获取初始schame
+export const createInitialSchame = () => {
+    return {
+        componentsTree: {},
+        layout: {},
+        query: undefined
+    }
+} 

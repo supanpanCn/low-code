@@ -35,12 +35,10 @@ export default {
     handleDragStart(item,event) {
       this.center.notify(true);
       event.dataTransfer.setData("ui-component-name", item.uiName);
-    //   this.$emit("pick-component", item.uiName);
     },
     handleDragEnd(event){
         this.center.notify(false)
         event.dataTransfer.clearData("ui-component-name");
-        // this.$emit("pick-over")
     }
   },
   components: {
