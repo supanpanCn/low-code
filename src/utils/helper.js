@@ -2,7 +2,13 @@ import { ElMessage } from 'element-plus';
 const uiMap = {
     uiButton: '按钮',
     uiContainer: '交互组件',
-    uiInput: '输入框'
+    uiInput: '输入框',
+    uiTag:'标签'
+}
+// 关键组件标识
+export const uiFlag = {
+    ROOT: 'canvas',
+    CONTAINER: 'uiContainer',
 }
 export const uiPrefix = 'enchanceUi'
 // 将组件name映射为中文
@@ -14,10 +20,6 @@ export const bindActiveEvent = (_this) => {
     return {
         onClick: e => {
             e.stopPropagation();
-            _this.$emit('activate', {
-                type: 'enchanceUiButton',
-                id: _this._.uid
-            })
         }
     }
 }
@@ -31,11 +33,7 @@ export const hasLen = (p) => {
     }
     return false
 }
-// 关键组件标识
-export const uiFlag = {
-    ROOT: 'canvas',
-    CONTAINER: 'uiContainer'
-}
+
 // 消息提示
 export const showMsg = (msg, type = 'warning') => {
     ElMessage[type](msg)
@@ -45,13 +43,13 @@ export const createNode = (nodeName) => {
     return {
         type: nodeName,
         children: [],
-        uid:getUuid()
+        uid: getUuid()
     };
 }
 // 获取交互组件
 export const getNearestContainerId = (e) => {
     let node = e.target
-    while(!node.className.includes(uiFlag.CONTAINER)){
+    while (!node.className.includes(uiFlag.CONTAINER)) {
         node = node.parentNode
     }
     return node.getAttribute('uid')
@@ -81,4 +79,3 @@ export const getUuid = () => {
     });
     return uuid;
 }
-

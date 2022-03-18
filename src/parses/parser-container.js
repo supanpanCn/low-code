@@ -15,7 +15,10 @@ export default {
             onDragover: () => {
                 // console.log('炸')
             },
-            ...bindActiveEvent(this)
+            onClick:()=>{
+                // console.log(this.$parent,'执行')
+            }
+            // ...bindActiveEvent(this)
         }
         return <UiContainer {..._props}>
             {children}
