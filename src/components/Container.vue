@@ -45,6 +45,8 @@ export default {
   min-height: 150px;
   background-color: #fff;
   box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
   &.draging {
     border: 1px solid blue;
   }
