@@ -47,7 +47,7 @@ export default {
                 if(tree.isRoot){
                     return realCom.render(h,tree,children)
                 }
-                return <DeleteHoc uid={tree.uid}>
+                return <DeleteHoc uid={tree.uid} type={tree.type}>
                     {realCom.render(h,tree,children)}
                 </DeleteHoc> 
             }

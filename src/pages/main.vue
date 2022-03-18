@@ -53,11 +53,12 @@ export default {
   methods: {
     handleRemoveNode(uid){
       const { componentsTree: tree } = this.jsonSchema;
+      let breakDfs = false
       function del(node){
-        for(let i=0;i<node.length;i++){
+        for(let i=0;i<node.length && !breakDfs;i++){
           if(node[i].uid === uid){
             node.splice(i,1)
-            break
+            breakDfs = true
           }else{
             del(node[i].children)
           }
@@ -128,7 +129,7 @@ export default {
       :deep >.uiContainer:nth-of-type(1){
         height: 100%;
         box-sizing: border-box;
-        padding-top: 20px;
+        display: block;
       }
     }
   }

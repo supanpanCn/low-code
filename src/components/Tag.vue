@@ -1,5 +1,5 @@
 <template>
-  <el-tag>Tag 1</el-tag>
+  <el-tag data-id="uiTag">Tag 1</el-tag>
 </template>
 <script>
 export default {

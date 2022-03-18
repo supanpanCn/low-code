@@ -5,9 +5,9 @@ export class ActiveList{
     attach(instance){
         this.actives.push(instance)
     }
-    update(){
+    update(key){
         this.actives.forEach(v=>{
-            v.isActive = false
+            v[key] = false
         })
     }
     static instance = null
