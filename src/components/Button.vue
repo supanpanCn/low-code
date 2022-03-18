@@ -10,8 +10,5 @@ export default {
           default:'确认'
       }
   },
-  mounted(){
-      console.log(this.$attrs,'this.$attrs')
-  }
 };
 </script>
