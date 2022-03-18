@@ -3,7 +3,7 @@
     <!-- 顶栏  -->
     <el-row class="topBarBox">
       <el-col :span="24">
-        <TopBar />
+        <TopBar :tree="jsonSchema.componentsTree" :updateKey="updateKey"/>
       </el-col>
     </el-row>
     <!-- 主面板 -->
@@ -49,6 +49,8 @@ export default {
       jsonSchema: createInitialSchame(),
       updateKey:0
     };
+  },
+  mounted() {
   },
   methods: {
     handleRemoveNode(uid){
