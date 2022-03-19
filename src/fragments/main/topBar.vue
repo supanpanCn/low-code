@@ -4,45 +4,80 @@
     <div class="r">
       <div class="history">
         <el-tooltip effect="dark" content="撤销" placement="bottom">
-          <div :class="['revoke','item',active?'act':'']" @click="handleRevoke"></div>
+          <div
+            :class="['revoke', 'item', active ? 'act' : '']"
+            @click="active && $emit('revocation')"
+          ></div>
         </el-tooltip>
         <el-tooltip effect="dark" content="历史" placement="bottom">
-          <div :class="['past','item',active?'act':'']" @click="handlePast"></div>
+          <div
+            :class="['past', 'item', memo.length ? 'act' : '']"
+            @click="visible = !!memo.length"
+          ></div>
         </el-tooltip>
         <el-tooltip effect="dark" content="保存" placement="bottom">
-          <div class="save item" @click="handleSave"></div>
+          <div class="save item" @click="active && $emit('save')"></div>
         </el-tooltip>
       </div>
-      <div class="user">{{userName}}</div>
+      <div class="user">{{ userName }}</div>
+      <el-dialog
+        v-model="visible"
+        title="历史"
+        width="40%"
+        custom-class="top-bar-modal"
+        :before-close="handleClose"
+      >
+        <el-select v-model="selectItem" placeholder="请选择历史" size="large">
+          <el-option
+            v-for="item in options"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="visible = false">取消</el-button>
+            <el-button type="primary" @click="handleConfirm">确认</el-button>
+          </span>
+        </template>
+      </el-dialog>
     </div>
   </div>
 </template>
 <script>
+import {
+  showMsg,
+} from "~utils";
 export default {
   name: "TopBar",
-  props:['tree','updateKey'],
+  props: ["memo", "active"],
   data() {
     return {
       userName: "三岁就会写bug",
-      active:false
+      visible: false,
+      options: [],
+      selectItem:undefined
     };
   },
-  watch:{
-      updateKey:function(){
-        if(this.tree.type){
-          this.active = !!this.tree.children.length 
-        }else{
-          this.active = false
-        }
+  watch: {
+    visible: function (value) {
+      if (value) {
+        this.options = Object.keys(this.memo.memos);
       }
+    },
   },
   methods: {
-    handleRevoke() {
-
-    },
-    handlePast() {},
-    handleSave() {}
-  }
+    handleConfirm(){
+      if(!this.selectItem){
+        showMsg('请选择')
+        return
+      }
+      let schameTree = this.memo.getMemo(this.selectItem)
+      this.$emit('back',schameTree)
+      this.visible = false
+    }
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -84,7 +119,7 @@ export default {
         &.past {
           .bg("./../../assets/img/history-dormancy.png");
           width: 25px;
-          &.act{
+          &.act {
             .bg("./../../assets/img/history.png");
           }
         }
@@ -93,10 +128,15 @@ export default {
         }
         &.revoke {
           .bg("./../../assets/img/revoke-dormancy.png");
-          &.act{
+          &.act {
             .bg("./../../assets/img/revoke.png");
           }
         }
+      }
+    }
+    :deep .top-bar-modal {
+      .el-dialog__body {
+        padding: 4px 20px;
       }
     }
     .user {

@@ -11,12 +11,20 @@ export default {
                 return createInitialSchame()
             }
         },
+        updateKey:{
+            type:Number
+        }
     },
     data() {
         return {
             pageParams: null,
             layout: null,
             renderFunc: null,
+        }
+    },
+    watch:{
+        updateKey:function(){
+            this.init()
         }
     },
     created() {
@@ -55,6 +63,7 @@ export default {
         }
     },
     render() {
+        
         return <div id='app'>
             {this.renderTree(this.tree)}
         </div>

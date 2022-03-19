@@ -3,7 +3,7 @@
     <el-empty description="请拖拽到此"></el-empty>
     <div class="empty" data-id="empty" @dragover.prevent></div>
   </div>
-  <renderEngine :jsonSchema="jsonSchema" v-else></renderEngine>
+  <renderEngine :jsonSchema="jsonSchema" :updateKey="updateKey" v-else></renderEngine>
 </template>
 
 <script>
@@ -29,6 +29,7 @@ export default {
   },
   updated() {
     this.isEmpty = hasLen(this.jsonSchema.componentsTree);
+    console.log('更新')
   },
   components: {
     ...parsers,

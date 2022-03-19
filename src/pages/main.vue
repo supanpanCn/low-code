@@ -3,7 +3,13 @@
     <!-- 顶栏  -->
     <el-row class="topBarBox">
       <el-col :span="24">
-        <TopBar :tree="jsonSchema.componentsTree" :updateKey="updateKey"/>
+        <TopBar
+          @revocation="handleRevocation"
+          @save="handleSave"
+          @back="handleBack"
+          :active="active"
+          :memo="memo"
+        />
       </el-col>
     </el-row>
     <!-- 主面板 -->
@@ -14,7 +20,11 @@
       </el-col>
       <!-- 画布 -->
       <el-col :span="15">
-        <CanvasArea :jsonSchema="jsonSchema" :updateKey="updateKey" @drop="handleDrop"/>
+        <CanvasArea
+          :jsonSchema="jsonSchema"
+          :updateKey="updateKey"
+          @drop="handleDrop"
+        />
       </el-col>
       <!-- 控制面板 -->
       <el-col :span="6">
@@ -29,6 +39,7 @@ import TopBar from "./../fragments/main/topBar";
 import Stock from "../fragments/main/stock.vue";
 import CanvasArea from "../fragments/main/canvasArea.vue";
 import ConfigWrapper from "../fragments/main/configWrapper.vue";
+import moment from "moment";
 import {
   createNode,
   createInitialSchame,
@@ -36,82 +47,125 @@ import {
   getNearestContainerId,
   uiFlag,
   showMsg,
+  MemoList,
+  Stack,
+  isSameTree
 } from "~utils";
 export default {
   name: "Main",
-  provide(){
+  provide() {
     return {
-      removeNode:this.handleRemoveNode
-    }
+      removeNode: this.handleRemoveNode,
+    };
   },
   data() {
     return {
       jsonSchema: createInitialSchame(),
-      updateKey:0
+      updateKey: 0,
+      stack: [],
+      memo: {},
+      active: false,
     };
   },
+  watch: {
+    updateKey: function () {
+      const tree = this.jsonSchema.componentsTree;
+      if (tree.type) {
+        this.stack.push(tree);
+        this.active = !!tree.children.length;
+      } else {
+        this.active = false;
+      }
+    },
+  },
+  created() {
+    this.stack = new Stack();
+    this.memo = new MemoList();
+  },
   methods: {
-    handleRemoveNode(uid){
+    handleRevocation() {
+      console.log("撤回");
+    },
+    handleBack(tree){
+      this.jsonSchema.componentsTree = tree
+      this.updateKey++;
+    },
+    handleSave() {
+      const tree = this.jsonSchema.componentsTree;
+      if (tree.type) {
+        const key = moment().format("YYYY-MM-DD HH:mm:ss");
+        if (this.memo.length) {
+          if (isSameTree(tree, this.memo.current)) {
+            showMsg("保存成功-same", "success");
+            return;
+          }
+        }
+        this.memo.setMemo(key, JSON.parse(JSON.stringify(tree)));
+        showMsg("保存成功", "success");
+      }
+    },
+    handleRemoveNode(uid) {
       const { componentsTree: tree } = this.jsonSchema;
-      let breakDfs = false
-      function del(node){
-        for(let i=0;i<node.length && !breakDfs;i++){
-          if(node[i].uid === uid){
-            node.splice(i,1)
-            breakDfs = true
-          }else{
-            del(node[i].children)
+      let breakDfs = false;
+      function del(node) {
+        for (let i = 0; i < node.length && !breakDfs; i++) {
+          if (node[i].uid === uid) {
+            node.splice(i, 1);
+            breakDfs = true;
+          } else {
+            del(node[i].children);
           }
         }
       }
-      del(tree.children)
-      this.updateKey++
+      del(tree.children);
+      this.updateKey++;
     },
     handleDrop(e) {
       const { componentsTree: tree } = this.jsonSchema;
       // 判断是否存在交互组件
       const uiName = e.dataTransfer.getData("ui-component-name");
-      if(!tree.type && uiName !== uiFlag.CONTAINER){
-        showMsg('请选择交互组件');
-        return
+      if (!tree.type && uiName !== uiFlag.CONTAINER) {
+        showMsg("请选择交互组件");
+        return;
       }
       // 组装schema
-      if (!tree.type) { //根节点
-        tree.type='Container'
-        tree.uid = getUuid()
-        tree.isRoot = true
-        tree.children = []
+      if (!tree.type) {
+        //根节点
+        tree.type = "Container";
+        tree.uid = getUuid();
+        tree.isRoot = true;
+        tree.children = [];
       } else {
-        const uid = getNearestContainerId(e)
-        const stack = [tree]
-        let schameNode = null
-        while(stack.length){
-          const node = stack.shift()
-          if(node.uid === uid){
-            stack.length = 0
-            schameNode = node
-          }else{
-            if(Array.isArray(node.children)){
-              for(let i=0;i<node.children.length;i++){
-                stack.push(node.children[i])
+        const uid = getNearestContainerId(e);
+        const stack = [tree];
+        let schameNode = null;
+        while (stack.length) {
+          const node = stack.shift();
+          if (node.uid === uid) {
+            stack.length = 0;
+            schameNode = node;
+          } else {
+            if (Array.isArray(node.children)) {
+              for (let i = 0; i < node.children.length; i++) {
+                stack.push(node.children[i]);
               }
             }
           }
         }
-        if(!Array.isArray(schameNode.children)){
-          schameNode.children = []
+        if (!Array.isArray(schameNode.children)) {
+          schameNode.children = [];
         }
-        schameNode.children.push(createNode(uiName.slice(2)))
+        schameNode.children.push(createNode(uiName.slice(2)));
       }
-      this.updateKey++
-    }
+      this.updateKey++;
+    },
   },
   components: {
     TopBar,
     Stock,
     CanvasArea,
-    ConfigWrapper
-  }
+    ConfigWrapper,
+  },
 };
 </script>
 
@@ -124,9 +178,9 @@ export default {
   }
   .mainBox {
     height: calc(100% - 50px);
-    #app{
+    #app {
       height: 100%;
-      :deep >.uiContainer:nth-of-type(1){
+      :deep > .uiContainer:nth-of-type(1) {
         height: 100%;
         box-sizing: border-box;
         display: block;

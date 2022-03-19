@@ -34,7 +34,6 @@ export default {
       const childElement = wrapper.children[0];
       if (childElement.dataset.id !== uiFlag.CONTAINER) {
         const { width } = getComputedStyle(childElement);
-        console.log(width,'width')
         const w = width ? width.replace("px", "") : 180;
         wrapper.style.width = w > 180 ? "180px" : w + "px";
       }

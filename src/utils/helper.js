@@ -3,7 +3,7 @@ const uiMap = {
     uiButton: '按钮',
     uiContainer: '交互组件',
     uiInput: '输入框',
-    uiTag:'标签'
+    uiTag: '标签'
 }
 // 关键组件标识
 export const uiFlag = {
@@ -78,4 +78,20 @@ export const getUuid = () => {
         return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
     });
     return uuid;
+}
+// 判断两棵树是否相同
+export const isSameTree = (p, q) => {
+    if ((p == null && q != null) || (p != null && q == null)) {
+        return false;
+    }
+    if (p == null && q == null) {
+        return true;
+    }
+    if (p.uid != q.uid) {
+        return false;
+    }
+    if (p.children.length != q.children.length) {
+        return false;
+    }
+    return p.children.every((v, i) => isSameTree(v, q.children[i]))
 }
