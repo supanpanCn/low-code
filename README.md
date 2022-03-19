@@ -26,15 +26,13 @@
 * 10.弹窗modal
 * 11.列表table
 ---
+## 在线Demo
 >
-    在线Demo
+    https://supanpancn.github.io/low-code.github.cn/#/main
 >
-## [demo地址](https://supanpancn.github.io/low-code.github.cn/#/main)
 ---
->
-    文档
->
-## waiting
+## 文档
+* 1.waiting
 ---
 
 
