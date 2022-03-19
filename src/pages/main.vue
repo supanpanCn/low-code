@@ -71,7 +71,7 @@ export default {
     updateKey: function () {
       const tree = this.jsonSchema.componentsTree;
       if (tree.type) {
-        this.stack.push(tree);
+        this.stack.push(JSON.parse(JSON.stringify(tree)));
         this.active = !!tree.children.length;
       } else {
         this.active = false;
@@ -84,7 +84,8 @@ export default {
   },
   methods: {
     handleRevocation() {
-      console.log("撤回");
+      const previousTree = this.stack.pop()
+      this.handleBack(previousTree)
     },
     handleBack(tree){
       this.jsonSchema.componentsTree = tree
@@ -180,10 +181,13 @@ export default {
     height: calc(100% - 50px);
     #app {
       height: 100%;
+      box-sizing: border-box;
+      
       :deep > .uiContainer:nth-of-type(1) {
         height: 100%;
         box-sizing: border-box;
         display: block;
+        border-top: 1px solid #ccc;
       }
     }
   }

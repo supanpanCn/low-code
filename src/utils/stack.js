@@ -6,6 +6,7 @@ export class Stack{
         this.stack.push(item)
     }
     pop(){
+        this.stack.pop()
         return this.stack.pop()
     }
 }

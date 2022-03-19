@@ -23,7 +23,7 @@
       <el-dialog
         v-model="visible"
         title="历史"
-        width="40%"
+        width="30%"
         custom-class="top-bar-modal"
         :before-close="handleClose"
       >
