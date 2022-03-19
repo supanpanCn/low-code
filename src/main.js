@@ -4,7 +4,7 @@ import './assets/reset.css'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import router from './routes/index'
-const app = createApp(App)
+export const app = createApp(App)
 app.use(ElementPlus)
 app.use(router)
 app.mount('#app')

@@ -19,7 +19,7 @@
         <Stock />
       </el-col>
       <!-- 画布 -->
-      <el-col :span="15">
+      <el-col :span="16">
         <CanvasArea
           :jsonSchema="jsonSchema"
           :updateKey="updateKey"
@@ -27,7 +27,7 @@
         />
       </el-col>
       <!-- 控制面板 -->
-      <el-col :span="6">
+      <el-col :span="5">
         <ConfigWrapper />
       </el-col>
     </el-row>

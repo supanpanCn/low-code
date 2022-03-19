@@ -1,11 +1,11 @@
 <template>
   <div class="configWrapper">
-    <ConfigTabsHoc>
-      <template v-slot:props>
-        属性配置
+    <ConfigTabsHoc :activeName="activeName" ref="tabs">
+      <template v-slot:attr> 
+        <component :is="currentComponent" activeName='attr' />
       </template>
-      <template v-slot:style>
-        样式配置
+      <template v-slot:behaviour> 
+        <component :is="currentComponent" activeName='behaviour' />
       </template>
     </ConfigTabsHoc>
   </div>
@@ -13,10 +13,21 @@
 
 <script>
 import ConfigTabsHoc from "../../hoc/config-tabs-hoc.vue";
+import { uiConfig } from "../../config";
 export default {
   name: "configWrapper",
   components: {
     ConfigTabsHoc,
+    ...uiConfig
+  },
+  data(){
+    return {
+      activeName:'attr',
+      currentComponent:uiConfig['uiButtonConfig']
+    }
+  },
+  mounted() {
+    console.log(uiConfig, "uiConfig");
   },
 };
 </script>

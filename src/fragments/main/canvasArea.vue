@@ -29,7 +29,6 @@ export default {
   },
   updated() {
     this.isEmpty = hasLen(this.jsonSchema.componentsTree);
-    console.log('更新')
   },
   components: {
     ...parsers,
