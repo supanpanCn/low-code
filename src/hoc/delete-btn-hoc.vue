@@ -2,6 +2,7 @@
   <div
     :class="{deleteBtnHoc:true,isContainer:type==='Container'}"
     @click="handleActivate"
+    @focus="handleFocus"
     ref="child"
   >
     <div class="delete" @click="handleDelete" v-if="isShowDelete"></div>
@@ -9,7 +10,7 @@
   </div>
 </template>
 <script>
-import { ActiveList, uiFlag } from "~utils";
+import { ActiveList, uiFlag,EventBus } from "~utils";
 export default {
   name: "deleteBtnHoc",
   props: ["uid", "type"],
@@ -23,6 +24,9 @@ export default {
   mounted() {
     this.actInstance = ActiveList.getInstance();
     this.setDynamicWrapperW();
+    EventBus.on(this.uid,(e)=>{
+      this.handleActivate(e)
+    })
   },
   methods: {
     setDynamicWrapperW() {
@@ -30,6 +34,7 @@ export default {
       const childElement = wrapper.children[0];
       if (childElement.dataset.id !== uiFlag.CONTAINER) {
         const { width } = getComputedStyle(childElement);
+        console.log(width,'width')
         const w = width ? width.replace("px", "") : 180;
         wrapper.style.width = w > 180 ? "180px" : w + "px";
       }
@@ -51,6 +56,7 @@ export default {
           this.isShowDelete = false;
         }, 100);
       });
+      EventBus.off(this.uid)
       this.removeNode(this.uid);
     }
   }
@@ -71,6 +77,7 @@ export default {
     width: 14px;
     height: 14px;
     cursor: pointer;
+    z-index: 99;
   }
 
   &.isContainer {

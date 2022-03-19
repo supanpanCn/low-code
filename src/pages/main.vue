@@ -35,7 +35,7 @@ import {
   getUuid,
   getNearestContainerId,
   uiFlag,
-  showMsg
+  showMsg,
 } from "~utils";
 export default {
   name: "Main",
@@ -49,8 +49,6 @@ export default {
       jsonSchema: createInitialSchame(),
       updateKey:0
     };
-  },
-  mounted() {
   },
   methods: {
     handleRemoveNode(uid){

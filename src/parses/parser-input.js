@@ -1,13 +1,16 @@
 import uiInput from 'ui/Input'
-import { bindActiveEvent } from '~utils'
+import { bindActiveEvent, EventBus } from '~utils'
 export default {
     name: 'enchanceUiInput',
     components: {
         uiInput
     },
-    render() {
+    render(tree) {
         const _props = {
-            ...bindActiveEvent(this)
+            ...bindActiveEvent(this),
+            onFocus: (e) => {
+                EventBus.emit(`${tree.uid}`, e)
+            }
         }
         return <uiInput {..._props} />
     },

@@ -7,7 +7,7 @@ export default {
     components: {
         UiContainer
     },
-    render(_, tree, children) {
+    render(tree, children) {
         this.schame = tree
         const {uid=getUuid()} = tree
         const _props = {
