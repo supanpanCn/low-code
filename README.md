@@ -1,24 +1,44 @@
-# low-code
+# 一个基于vue实现的低代码平台（前端）--持续更新中...
+>
+    目标
+>
+## 实现简单的后台管理系统页面
+---
+>
+    功能介绍
+>
+## 已实现的功能
+---
+* 1.物料堆组件
+* 2.拖拽生成schame  
+* 3.解析schame渲染组件到画布
+* 4.节点删除
+* 5.撤销重做、历史穿梭
 
-## Project setup
-```
-npm install
-```
+## 待实现的功能
+--- 
+* 1.配置面板（事件绑定、样式配置）
+* 2.吸附对齐、旋转对齐
+* 3.缩放
+* 4.页面跳转
+* 5.组件交互
+* 6.接口交互
+* 7.复制粘贴
+* 8.导航菜单menu
+* 9.筛选组filter
+* 10.弹窗modal
+* 11.列表table
+---
+>
+    在线Demo
+>
+## [demo地址](https://supanpancn.github.io/low-code.github.cn/#/main)
+---
+>
+    文档
+>
+## waiting
+---
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
 
-### Compiles and minifies for production
-```
-npm run build
-```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
