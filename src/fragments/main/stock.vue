@@ -3,8 +3,9 @@
     <li
       class="stock-item"
       :draggable="true"
-      @dragstart="handleDragStart(v,$event)"
+      @dragstart="handleDragStart(v, $event)"
       @dragend="handleDragEnd"
+      @drag="handleDrag"
       v-for="v in stacks"
       :key="v.uiName"
     >
@@ -15,7 +16,8 @@
 
 <script>
 import { uiComponents } from "ui/index.js";
-import { parseUiName,Center } from "~utils";
+import { parseUiName, Center } from "~utils";
+import { mapState } from "vuex";
 export default {
   name: "Stock",
   data() {
@@ -24,6 +26,9 @@ export default {
       center: null,
     };
   },
+  computed: mapState({
+    barAndMenuInfo: ({ common }) => common.barAndMenuInfo,
+  }),
   mounted() {
     this.stacks = Object.keys(uiComponents).map((name) => ({
       uiName: name,
@@ -32,15 +37,18 @@ export default {
     this.center = Center.getInstance();
   },
   methods: {
-    handleDragStart(item,event) {
+    handleDragStart(item, event) {
       this.center.notify(true);
       event.dataTransfer.setData("ui-component-name", item.uiName);
     },
-    handleDragEnd(event){
-        this.center.notify(false)
-        this.isEnter = false
-        event.dataTransfer.clearData("ui-component-name");
-    }
+    handleDragEnd(event) {
+      this.center.notify(false);
+      this.isEnter = false;
+      event.dataTransfer.clearData("ui-component-name");
+    },
+    handleDrag(e) {
+      console.log(this.barAndMenuInfo,'barHeight')
+    },
   },
   components: {
     ...uiComponents,

@@ -37,13 +37,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.canvasWrapper {
-  // width: 100%;
-  // height: 100%;
-  // position: relative;
-  // z-index: 99;
-  // background-color: #ccc;
-}
 .emptyBox {
   width: 100%;
   height: 100%;

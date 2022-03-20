@@ -52,6 +52,7 @@ import {
   Stack,
   isSameTree,
   getPooints,
+  getRelativePos
 } from "~utils";
 export default {
   name: "Main",
@@ -83,6 +84,9 @@ export default {
   created() {
     this.stack = new Stack();
     this.memo = new MemoList();
+  },
+  mounted() {
+    this.$store.dispatch("common/setCommonData",getRelativePos());
   },
   methods: {
     handleRevocation() {
@@ -124,6 +128,7 @@ export default {
       this.updateKey++;
     },
     handleDrop(e) {
+      console.log("执行");
       const { componentsTree: tree } = this.jsonSchema;
       // 判断是否存在交互组件
       const uiName = e.dataTransfer.getData("ui-component-name");
@@ -140,7 +145,7 @@ export default {
         tree.children = [];
       } else {
         const { x, y } = getPooints(e);
-        const {uid} = getNearestContainerId(e);
+        const { uid } = getNearestContainerId(e);
         const stack = [tree];
         let schameNode = null;
         while (stack.length) {

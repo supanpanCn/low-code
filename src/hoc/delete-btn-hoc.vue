@@ -78,8 +78,6 @@ export default {
           const current = pxToNumber(top) + pxToNumber(height);
           lowest = Math.max(lowest, current);
         }
-        console.log(width,'width')
-
         wrapper.style = objToStr({
           top: lowest + 10 + "px",
           width,
