@@ -2,6 +2,7 @@
   <div
     :class="{ deleteBtnHoc: true, isContainer: type === 'Container' }"
     :style="attribute"
+    :id="this.uid"
     @click="handleActivate"
     @focus="handleFocus"
     ref="child"
@@ -9,8 +10,8 @@
     <div class="delete" @click="handleDelete" v-if="isShowDelete"></div>
 
     <teleport to="body" v-if="isShowDelete">
-      <div ref="subline-x" style="position: fixed; top: 3px"></div>
-      <div ref="subline-y" style="position: fixed; top: 3px"></div>
+      <div ref="subline-x"></div>
+      <div ref="subline-y"></div>
     </teleport>
     <slot />
   </div>
@@ -22,8 +23,11 @@ import {
   EventBus,
   pxToNumber,
   parseLayout,
-  getPooints,
+  getRootElement,
+  getRelativePos,
   objToStr,
+  setSubline,
+  getNearestContainerId,
 } from "~utils";
 export default {
   name: "deleteBtnHoc",
@@ -39,7 +43,6 @@ export default {
     };
   },
   mounted() {
-    console.log(this.$refs["subline-x"], "绑定的");
     this.actInstance = ActiveList.getInstance();
     this.setDynamicWrapperStyle();
     EventBus.on(this.uid, (e) => {
@@ -53,47 +56,35 @@ export default {
       if (childElement.dataset.id !== uiFlag.CONTAINER) {
         const { width } = getComputedStyle(childElement);
         const w = width ? pxToNumber(width) : 180;
-        wrapper.style.width = w > 180 ? "180px" : w + "px";
+        wrapper.style = objToStr({
+          width: w > 180 ? "180px" : w + "px",
+        });
         const { layout } = this.tree;
         const { attribute } = parseLayout(layout, {
           w,
         });
         this.attribute = attribute;
       } else {
-        // const {el} = getNearestContainerId(wrapper)
-        // const children = el.children
-        // let lowest = 0
-        // for(let i = 0 ; i < children.length - 1;i++){
-        //   const {height,top} = getComputedStyle(children[i])
-        //   const current = pxToNumber(top) + pxToNumber(height)
-        //   console.log(current,'current')
-        //   lowest = Math.max(lowest,current)
-        // }
-        // wrapper.style.top = lowest + 10 + 'px'
-        // console.log(lowest,'lowest')
+        const { el } = getNearestContainerId(wrapper);
+        const { width } = getRootElement();
+        const children = el.children;
+        const { barHeight } = getRelativePos();
+        let lowest = barHeight;
+        if (children.length > 1) {
+          lowest = 0;
+        }
+        for (let i = 0; i < children.length - 1; i++) {
+          const { height, top } = getComputedStyle(children[i]);
+          const current = pxToNumber(top) + pxToNumber(height);
+          lowest = Math.max(lowest, current);
+        }
+        console.log(width,'width')
+
+        wrapper.style = objToStr({
+          top: lowest + 10 + "px",
+          width,
+        });
       }
-    },
-    setSubline() {
-      // 设置辅助线
-      const root = document.getElementById("root");
-      const { width, height } = getComputedStyle(root);
-      const { menuWidth, barHeight } = getPooints({});
-      this.$refs["subline-x"].style = objToStr({
-        width,
-        height: "1px",
-        top: pxToNumber(this.attribute.top) + pxToNumber(barHeight) + "px",
-        left: pxToNumber(menuWidth) + "px",
-        position: "absolute",
-        background: "blue",
-      });
-      this.$refs["subline-y"].style = objToStr({
-        width: "1px",
-        height,
-        left: pxToNumber(this.attribute.left) + pxToNumber(menuWidth) + "px",
-        top: pxToNumber(barHeight) + "px",
-        position: "absolute",
-        background: "blue",
-      });
     },
     handleActivate(e) {
       e.stopPropagation();
@@ -101,11 +92,11 @@ export default {
         this.actInstance.update("isShowDelete");
         this.actInstance.attach(this);
       }
-      
+
       this.isShowDelete = true;
-      this.$nextTick(()=>{
-        this.setSubline()
-      })
+      this.$nextTick(() => {
+        setSubline.call(this, this.attribute);
+      });
     },
     handleDelete() {
       if (this.actInstance) {
@@ -126,7 +117,8 @@ export default {
 .deleteBtnHoc {
   width: auto;
   height: auto;
-  position: absolute;
+  position: fixed;
+  box-sizing: border-box;
   cursor: pointer;
   .delete {
     position: absolute;

@@ -1,7 +1,6 @@
 <template>
   <div
     :class="{ draging: draging,uiContainer:true }"
-    :p-index="pIndex"
     :uid="uid"
     data-id="uiContainer"
     @dragover.prevent
@@ -49,7 +48,7 @@ export default {
   flex-wrap: wrap;
   position: relative;
   &.draging {
-    border: 1px solid blue;
+    background:rgba(135, 135, 160,.3) ;
   }
 }
 </style>

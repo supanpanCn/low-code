@@ -1,18 +1,19 @@
 import { ElMessage } from 'element-plus';
-const uiMap = {
-    uiButton: '按钮',
-    uiContainer: '交互组件',
-    uiInput: '输入框',
-    uiTag: '标签'
+import { uiMap, attrMap } from './inner'
+
+export const pxToNumber = (px) => {
+    return px.replace('px', '') * 1
 }
-const attrMap = {
-    x: 'left',
-    y: 'top',
-    w: 'width',
-    h: 'height'
-}
-export const pxToNumber = (px)=>{
-    return px.replace('px','') * 1
+// 获取物料和顶栏宽高
+export const getRelativePos = ()=>{
+    const menuWrapper = document.getElementsByClassName('stockWrapper')[0]
+    const barWrapper = document.getElementsByClassName('topBarWrapper')[0]
+    const { width } = getComputedStyle(menuWrapper)
+    const { height } = getComputedStyle(barWrapper)
+    return {
+        menuWidth:width,
+        barHeight:height
+    }
 }
 // 关键组件标识
 export const uiFlag = {
@@ -63,21 +64,16 @@ export const getNearestContainerId = (e) => {
         node = node.parentNode
     }
     return {
-        uid:node.getAttribute('uid'),
-        el:node
+        uid: node.getAttribute('uid'),
+        el: node
     }
 }
+
 // 获取物料在画布中的位置
 export const getPooints = (e) => {
-    const menuWrapper = document.getElementsByClassName('stockWrapper')[0]
-    const barWrapper = document.getElementsByClassName('topBarWrapper')[0]
-    const { width } = getComputedStyle(menuWrapper)
-    const { height } = getComputedStyle(barWrapper)
     return {
-        x: e.clientX - pxToNumber(width),
-        y: e.clientY - pxToNumber(height),
-        menuWidth:width,
-        barHeight:height
+        x: e.clientX,
+        y: e.clientY,
     }
 }
 // 解析layout
@@ -85,21 +81,64 @@ export const parseLayout = (layout, config) => {
     const { attr } = layout
     const { w } = config
     const attribute = {}
+    const { menuWidth:width, barHeight:height } = getRelativePos()
+
     for (let key in attr) {
-        const t = attrMap[key] == 'left' ? attr[key] - (w >> 1) : attr[key]
-        attribute[attrMap[key]] = (t > 0 ? t : 0) + 'px'
+        let t = attrMap[key] == 'left' ? attr[key] - (w >> 1): attr[key]
+        if (attrMap[key] == 'left') {
+            if (Math.abs(attr[key] - pxToNumber(width)) < (w>>1)) {
+                t = pxToNumber(width)
+            }
+        }
+
+        if (attrMap[key] == 'top') {
+            if (Math.abs(attr[key] - pxToNumber(height)) < 10) {
+                t = pxToNumber(height)
+            }
+        }
+        attribute[attrMap[key]] = t + 'px'
     }
 
     return {
         attribute
     }
 }
+// 获取根元素
+export const getRootElement = () => {
+    const root = document.getElementById("root");
+    const { width, height } = getComputedStyle(root);
+    return {
+        width,
+        height
+    }
+}
+// 设置辅助线
+export const setSubline = function (attribute) {
+    const { width, height } = getRootElement();
+    const { menuWidth, barHeight } = getRelativePos();
+    const { top, left } = attribute
+    this.$refs["subline-x"].style = objToStr({
+        width,
+        height: "1px",
+        top: pxToNumber(top) + "px",
+        left: pxToNumber(menuWidth) + "px",
+        position: "fixed",
+        background: "blue",
+    });
+    this.$refs["subline-y"].style = objToStr({
+        width: "1px",
+        height,
+        left: pxToNumber(left) + "px",
+        top: pxToNumber(barHeight) + "px",
+        position: "fixed",
+        background: "blue",
+    })
+}
 // 对象转str
-export const objToStr = (obj)=>{
-    debugger
+export const objToStr = (obj) => {
     let str = ''
-    for(let key in obj){
-        str += key + ':' + obj[key] + ';' 
+    for (let key in obj) {
+        str += key + ':' + obj[key] + ';'
     }
     return str
 }
