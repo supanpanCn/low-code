@@ -1,6 +1,6 @@
 <template>
   <div v-if="activeName=='attr'">
-      
+      <div>ssss</div>
   </div>
   <div v-else>behaviour</div>
 </template>

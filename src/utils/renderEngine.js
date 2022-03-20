@@ -55,7 +55,7 @@ export default {
                 if (tree.isRoot) {
                     return realCom.render(tree, children)
                 }
-                return <DeleteHoc uid={tree.uid} type={tree.type} key={tree.type}>
+                return <DeleteHoc tree={tree} key={tree.uid}>
                     {realCom.render(tree, children)}
                 </DeleteHoc>
             }
@@ -63,8 +63,7 @@ export default {
         }
     },
     render() {
-        
-        return <div id='app'>
+        return <div id='root' style={{position:'relative'}}>
             {this.renderTree(this.tree)}
         </div>
     },

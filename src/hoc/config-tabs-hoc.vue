@@ -4,12 +4,20 @@
       <el-tab-pane label="外观" name="attr">
         <div class="commom-attr">
           <div class="attr-coordinate">
-            <div class="attr-coordinate-x">x坐标</div>
+            <div class="attr-coordinate-x">x坐标:</div>
             <el-input v-model="input" placeholder="请输入x坐标" />
           </div>
           <div class="attr-coordinate">
-            <div class="attr-coordinate-y">y坐标</div>
+            <div class="attr-coordinate-y">y坐标:</div>
             <el-input v-model="input" placeholder="请输入y坐标" />
+          </div>
+          <div class="attr-area">
+            <div class="attr-area-w">宽度:</div>
+            <el-input v-model="input" placeholder="请输入宽度" />
+          </div>
+          <div class="attr-area">
+            <div class="attr-area-h">高度:</div>
+            <el-input v-model="input" placeholder="请输入高度" />
           </div>
         </div>
         <slot name="attr"></slot>
@@ -59,13 +67,16 @@ export default {
   }
   .commom-attr {
     width: 100%;
-    .attr-coordinate {
+    .attr-coordinate,
+    .attr-area {
       color: #606266;
       box-sizing: border-box;
       padding: 0 15px;
       margin-bottom: 10px;
       &-x,
-      &-y {
+      &-y,
+      &-w,
+      &-h {
         height: 25px;
       }
       :deep .el-input {

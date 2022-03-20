@@ -14,17 +14,17 @@ export default {
   name: "canvasArea",
   props: {
     jsonSchema: {
-      type: Object
+      type: Object,
     },
-    updateKey:{
-      type:Number,
-      default:0
-    }
+    updateKey: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
       components: [],
-      isEmpty: hasLen(this.jsonSchema.componentsTree)
+      isEmpty: hasLen(this.jsonSchema.componentsTree),
     };
   },
   updated() {
@@ -32,8 +32,8 @@ export default {
   },
   components: {
     ...parsers,
-    renderEngine
-  }
+    renderEngine,
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -44,18 +44,17 @@ export default {
   // z-index: 99;
   // background-color: #ccc;
 }
-.emptyBox{
+.emptyBox {
   width: 100%;
   height: 100%;
   position: relative;
   .empty {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
 }
-}
-
 </style>

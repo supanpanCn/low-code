@@ -38,6 +38,7 @@ export default {
     },
     handleDragEnd(event){
         this.center.notify(false)
+        this.isEnter = false
         event.dataTransfer.clearData("ui-component-name");
     }
   },

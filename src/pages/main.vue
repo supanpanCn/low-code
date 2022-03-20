@@ -40,6 +40,7 @@ import Stock from "../fragments/main/stock.vue";
 import CanvasArea from "../fragments/main/canvasArea.vue";
 import ConfigWrapper from "../fragments/main/configWrapper.vue";
 import moment from "moment";
+
 import {
   createNode,
   createInitialSchame,
@@ -49,7 +50,8 @@ import {
   showMsg,
   MemoList,
   Stack,
-  isSameTree
+  isSameTree,
+  getPooints,
 } from "~utils";
 export default {
   name: "Main",
@@ -84,11 +86,11 @@ export default {
   },
   methods: {
     handleRevocation() {
-      const previousTree = this.stack.pop()
-      this.handleBack(previousTree)
+      const previousTree = this.stack.pop();
+      this.handleBack(previousTree);
     },
-    handleBack(tree){
-      this.jsonSchema.componentsTree = tree
+    handleBack(tree) {
+      this.jsonSchema.componentsTree = tree;
       this.updateKey++;
     },
     handleSave() {
@@ -137,7 +139,8 @@ export default {
         tree.isRoot = true;
         tree.children = [];
       } else {
-        const uid = getNearestContainerId(e);
+        const { x, y } = getPooints(e);
+        const {uid} = getNearestContainerId(e);
         const stack = [tree];
         let schameNode = null;
         while (stack.length) {
@@ -156,7 +159,14 @@ export default {
         if (!Array.isArray(schameNode.children)) {
           schameNode.children = [];
         }
-        schameNode.children.push(createNode(uiName.slice(2)));
+        schameNode.children.push(
+          createNode(uiName.slice(2), {
+            attr: {
+              x,
+              y,
+            },
+          })
+        );
       }
       this.updateKey++;
     },
@@ -179,10 +189,10 @@ export default {
   }
   .mainBox {
     height: calc(100% - 50px);
-    #app {
+    #root {
       height: 100%;
       box-sizing: border-box;
-      
+
       :deep > .uiContainer:nth-of-type(1) {
         height: 100%;
         box-sizing: border-box;

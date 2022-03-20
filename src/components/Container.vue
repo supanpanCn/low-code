@@ -47,6 +47,7 @@ export default {
   box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
+  position: relative;
   &.draging {
     border: 1px solid blue;
   }

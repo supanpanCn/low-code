@@ -3,8 +3,11 @@ export class Observer{
         this.vnode = vnode
         center.attach(this)
     }
-    update(isDraging){
+    update(isDraging,cb){
         this.vnode.updateDraging(isDraging)
+        if(typeof cb === 'function'){
+            cb()
+        }
     }
 }
 

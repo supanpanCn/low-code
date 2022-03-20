@@ -5,9 +5,10 @@ export default {
     components:{
         uiButton
     },
-    render() {
+    render(tree) {
+        // console.log(tree,'tree')
         const _props = {
-            // ...bindActiveEvent(this)
+            // ...bindActiveEvent(this),
             onclick:(e)=>{
                 console.log('知道')
                 // e.stopPropagation();
