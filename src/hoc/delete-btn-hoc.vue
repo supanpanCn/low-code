@@ -46,6 +46,7 @@ export default {
   computed: mapState({
     barAndMenuInfo: ({ common }) => common.barAndMenuInfo,
     sublineId: ({ common }) => common.saveActiveSublineId,
+    shortcutKeyInfo: ({ common }) => common.shortcutKeyInfo,
   }),
   watch: {
     sublineId: function (id) {
@@ -59,6 +60,7 @@ export default {
         });
       }
     },
+    
   },
   mounted() {
     this.actInstance = ActiveList.getInstance();
@@ -66,6 +68,7 @@ export default {
     EventBus.on(this.uid, (e) => {
       this.handleActivate(e);
     });
+    
   },
   methods: {
     setDynamicWrapperStyle() {

@@ -6,7 +6,8 @@ function initialData() {
             barHeight: '0px',
         },
         tree: {},
-        saveActiveSublineId: ''
+        saveActiveSublineId: '',
+        shortcutKeyInfo: ''
     }
 }
 export default {
@@ -34,5 +35,8 @@ export default {
         saveActiveSublineId(state, id) {
             state.saveActiveSublineId = id
         },
+        saveShortcutKey(state, info) {
+            state.shortcutKeyInfo = info
+        }
     },
 }

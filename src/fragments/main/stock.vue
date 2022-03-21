@@ -16,7 +16,7 @@
 
 <script>
 import { uiComponents } from "ui/index.js";
-import { parseUiName, Center, pxToNumber } from "~utils";
+import { parseUiName, Center, pxToNumber,getNearestPoint } from "~utils";
 import { mapState } from "vuex";
 export default {
   name: "Stock",
@@ -55,24 +55,8 @@ export default {
       const realMenuWidth = pxToNumber(menuWidth) - paddingLeft;
       const realBarHeight = pxToNumber(barHeight);
       if (e.clientX - realMenuWidth > 20 && e.clientY - realBarHeight > 10) {
-        function _find(tree) {
-          const { children = [], layout = {}, type } = tree;
-          const { attr = {} } = layout;
-          const { x = 0, y = 0 } = attr;
-          let res = null;
-          const width = Math.abs(x - e.clientX);
-          const height = Math.abs(y - e.clientY);
-          const sideLen = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
-          if (sideLen < 80 && type !== '"Container"') {
-            res = tree;
-          }
-          for (let i = 0; i < children.length && !res; i++) {
-            res = _find(children[i]);
-          }
-          return res;
-        }
         if (this.tree.type) {
-          const item = _find(this.tree);
+          const item = getNearestPoint(this.tree,80,e);
           if (item && item.uid !== this.sublineId) {
             this.$store.commit("common/saveActiveSublineId", item.uid);
           }

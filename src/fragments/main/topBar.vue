@@ -46,9 +46,8 @@
   </div>
 </template>
 <script>
-import {
-  showMsg,
-} from "~utils";
+import { showMsg } from "~utils";
+import { mapState } from "vuex";
 export default {
   name: "TopBar",
   props: ["memo", "active"],
@@ -57,26 +56,43 @@ export default {
       userName: "三岁就会写bug",
       visible: false,
       options: [],
-      selectItem:undefined
+      selectItem: undefined,
     };
   },
+  computed: mapState({
+    shortcutKeyInfo: ({ common }) => common.shortcutKeyInfo,
+  }),
   watch: {
     visible: function (value) {
       if (value) {
         this.options = Object.keys(this.memo.memos);
       }
     },
+    shortcutKeyInfo: function (info) {
+      const { label } = info || {};
+      switch (label) {
+        case "撤销":
+          this.active && this.$emit("revocation");
+          break;
+        case "历史":
+          this.visible = !!this.memo.length;
+          break;
+        case "保存":
+          // this.active && this.$emit('save')
+          break;
+      }
+    },
   },
   methods: {
-    handleConfirm(){
-      if(!this.selectItem){
-        showMsg('请选择')
-        return
+    handleConfirm() {
+      if (!this.selectItem) {
+        showMsg("请选择");
+        return;
       }
-      let schameTree = this.memo.getMemo(this.selectItem)
-      this.$emit('back',schameTree)
-      this.visible = false
-    }
+      let schameTree = this.memo.getMemo(this.selectItem);
+      this.$emit("back", schameTree);
+      this.visible = false;
+    },
   },
 };
 </script>

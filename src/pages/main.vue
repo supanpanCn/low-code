@@ -88,6 +88,7 @@ export default {
   },
   mounted() {
     this.$store.commit("common/saveMenuAndBarElementInfo",getRelativePos());
+
   },
   methods: {
     handleRevocation() {
@@ -99,6 +100,7 @@ export default {
       this.updateKey++;
     },
     handleSave() {
+      debugger
       const tree = this.jsonSchema.componentsTree;
       if (tree.type) {
         const key = moment().format("YYYY-MM-DD HH:mm:ss");

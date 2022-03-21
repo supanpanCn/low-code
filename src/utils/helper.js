@@ -1,18 +1,32 @@
 import { ElMessage } from 'element-plus';
 import { uiMap, attrMap } from './inner'
-
+export const KeyCodeMap = {
+    90:{
+        label:'撤销',
+        value:'ctrl+z'
+    },
+    17:{
+        label:'历史',
+        value:'ctrl+x'
+    },
+    83:{
+        label:'保存',
+        value:'ctrl+s'
+    }
+}
+// px转数字
 export const pxToNumber = (px) => {
     return px.replace('px', '') * 1
 }
 // 获取物料和顶栏宽高
-export const getRelativePos = ()=>{
+export const getRelativePos = () => {
     const menuWrapper = document.getElementsByClassName('stockWrapper')[0]
     const barWrapper = document.getElementsByClassName('topBarWrapper')[0]
     const { width } = getComputedStyle(menuWrapper)
     const { height } = getComputedStyle(barWrapper)
     return {
-        menuWidth:width,
-        barHeight:height
+        menuWidth: width,
+        barHeight: height
     }
 }
 // 关键组件标识
@@ -81,12 +95,12 @@ export const parseLayout = (layout, config) => {
     const { attr } = layout
     const { w } = config
     const attribute = {}
-    const { menuWidth:width, barHeight:height } = getRelativePos()
+    const { menuWidth: width, barHeight: height } = getRelativePos()
 
     for (let key in attr) {
-        let t = attrMap[key] == 'left' ? attr[key] - (w >> 1): attr[key]
+        let t = attrMap[key] == 'left' ? attr[key] - (w >> 1) : attr[key]
         if (attrMap[key] == 'left') {
-            if (Math.abs(attr[key] - pxToNumber(width)) < (w>>1)) {
+            if (Math.abs(attr[key] - pxToNumber(width)) < (w >> 1)) {
                 t = pxToNumber(width)
             }
         }
@@ -182,3 +196,22 @@ export const isSameTree = (p, q) => {
     }
     return p.children.every((v, i) => isSameTree(v, q.children[i]))
 }
+// 获取最近节点
+export const getNearestPoint = (tree,distance,e) => {
+    const { children = [], layout = {}, type } = tree;
+    const { attr = {} } = layout;
+    const { x = 0, y = 0 } = attr;
+    let res = null;
+    const width = Math.abs(x - e.clientX);
+    const height = Math.abs(y - e.clientY);
+    const sideLen = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+    if (sideLen < distance && type !== '"Container"') {
+        res = tree;
+    }
+    for (let i = 0; i < children.length && !res; i++) {
+        res = getNearestPoint(children[i],distance,e);
+    }
+    return res;
+}
+
+
