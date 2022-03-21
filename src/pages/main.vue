@@ -79,6 +79,7 @@ export default {
       } else {
         this.active = false;
       }
+      this.$store.commit('common/saveTreeData',JSON.parse(JSON.stringify(tree)))
     },
   },
   created() {
@@ -86,7 +87,7 @@ export default {
     this.memo = new MemoList();
   },
   mounted() {
-    this.$store.dispatch("common/setCommonData",getRelativePos());
+    this.$store.commit("common/saveMenuAndBarElementInfo",getRelativePos());
   },
   methods: {
     handleRevocation() {
@@ -128,7 +129,6 @@ export default {
       this.updateKey++;
     },
     handleDrop(e) {
-      console.log("执行");
       const { componentsTree: tree } = this.jsonSchema;
       // 判断是否存在交互组件
       const uiName = e.dataTransfer.getData("ui-component-name");

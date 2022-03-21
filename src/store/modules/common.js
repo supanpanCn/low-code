@@ -2,9 +2,11 @@
 function initialData() {
     return {
         barAndMenuInfo: {
-            menuWidth: 0,
-            barHeight: 0,
-        }
+            menuWidth: '0px',
+            barHeight: '0px',
+        },
+        tree: {},
+        saveActiveSublineId: ''
     }
 }
 export default {
@@ -13,15 +15,24 @@ export default {
         ...initialData()
     },
     actions: {
-        async setCommonData({ commit }, payload) {
-            commit('saveMenuAndBarElementInfo', payload)
-        }
+        // async setActiveSubline({ commit, state }, id) {
+        //     const { tree } = state
+        //     console.log(tree,id)
+        // }
     },
     mutations: {
         saveMenuAndBarElementInfo(state, payload) {
             state.barAndMenuInfo = {
                 ...payload
             }
+        },
+        saveTreeData(state, payload) {
+            state.tree = {
+                ...payload
+            }
+        },
+        saveActiveSublineId(state, id) {
+            state.saveActiveSublineId = id
         },
     },
 }

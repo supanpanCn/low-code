@@ -9,7 +9,7 @@
   >
     <div class="delete" @click="handleDelete" v-if="isShowDelete"></div>
 
-    <teleport to="body" v-if="isShowDelete">
+    <teleport to="body" v-if="isShowSubline">
       <div ref="subline-x"></div>
       <div ref="subline-y"></div>
     </teleport>
@@ -24,11 +24,11 @@ import {
   pxToNumber,
   parseLayout,
   getRootElement,
-  getRelativePos,
   objToStr,
   setSubline,
   getNearestContainerId,
 } from "~utils";
+import { mapState } from "vuex";
 export default {
   name: "deleteBtnHoc",
   props: ["tree"],
@@ -40,7 +40,25 @@ export default {
       uid: this.tree.uid,
       type: this.tree.type,
       attribute: {},
+      isShowSubline: false,
     };
+  },
+  computed: mapState({
+    barAndMenuInfo: ({ common }) => common.barAndMenuInfo,
+    sublineId: ({ common }) => common.saveActiveSublineId,
+  }),
+  watch: {
+    sublineId: function (id) {
+      console.log(this.uid === id, "this.uid === id");
+      this.isShowSubline = this.uid === id;
+    },
+    isShowSubline: function (isShow) {
+      if (isShow) {
+        this.$nextTick(() => {
+          setSubline.call(this, this.attribute);
+        });
+      }
+    },
   },
   mounted() {
     this.actInstance = ActiveList.getInstance();
@@ -68,7 +86,7 @@ export default {
         const { el } = getNearestContainerId(wrapper);
         const { width } = getRootElement();
         const children = el.children;
-        const { barHeight } = getRelativePos();
+        const { barHeight } = this.barAndMenuInfo;
         let lowest = barHeight;
         if (children.length > 1) {
           lowest = 0;
@@ -90,7 +108,7 @@ export default {
         this.actInstance.update("isShowDelete");
         this.actInstance.attach(this);
       }
-
+      this.isShowSubline = true;
       this.isShowDelete = true;
       this.$nextTick(() => {
         setSubline.call(this, this.attribute);
