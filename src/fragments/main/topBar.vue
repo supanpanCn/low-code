@@ -11,7 +11,7 @@
         </el-tooltip>
         <el-tooltip effect="dark" content="历史" placement="bottom">
           <div
-            :class="['past', 'item', memo.length ? 'act' : '']"
+            :class="['past', 'item', props.memo.length ? 'act' : '']"
             @click="state.visible = !!props.memo.length"
           ></div>
         </el-tooltip>
@@ -52,17 +52,27 @@
 <script setup>
 import { reactive, watch, defineProps, computed, defineEmits } from "vue";
 import { showMsg } from "~utils";
-import { useStore } from "vuex";
+import useShortcut from "hooks/useShortcut";
 const state = reactive({
   userName: "三岁就会写bug",
   visible: false,
   options: [],
   selectItem: undefined,
 });
+
 const emit = defineEmits(["back", "revocation", "save"]);
-const store = useStore();
-const shortcutKeyInfo = computed(()=>store.state.common.shortcutKeyInfo);
 const props = defineProps(["memo", "active"]);
+useShortcut({
+  revocation:()=>{
+    props.active && emit("revocation");
+  },
+  history:()=>{
+    state.visible = !!props.memo.length;
+  },
+  save:()=>{
+    props.active && emit("save");
+  }
+});
 watch(
   () => state.visible,
   (visible) => {
@@ -70,29 +80,14 @@ watch(
       state.options = Object.keys(props.memo.memos);
     }
   }
-)
-watch(shortcutKeyInfo, (info) => {
-  if (info) {
-    const { label } = info || {};
-    switch (label) {
-      case "撤销":
-        props.active && emit("revocation");
-        break;
-      case "历史":
-        state.visible = !!props.memo.length;
-        break;
-      case "保存":
-        props.active && emit("save");
-        break;
-    }
-  }
-});
+);
 const handleConfirm = () => {
   if (!state.selectItem) {
     showMsg("请选择");
     return;
   }
   let schameTree = props.memo.getMemo(state.selectItem);
+  emit("back", schameTree);
   state.visible = false;
 };
 </script>

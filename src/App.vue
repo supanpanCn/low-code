@@ -4,30 +4,33 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { KeyCodeMap } from "~utils";
-export default {
-  name: "App",
-  components: {},
-  mounted() {
-    this.registerShortcutKey();
-  },
-  methods: {
-    registerShortcutKey() {
-      let isCtrlClick = false;
-      document.addEventListener("keydown", (e) => {
-        isCtrlClick = e.ctrlKey;
-        e.preventDefault()
+import { onMounted , readonly} from "vue";
+import { useStore } from 'vuex'
+import moment from "moment";
+const store = readonly(useStore())
+onMounted(() => {
+  registerShortcutKey();
+});
+
+const registerShortcutKey = () => {
+  let isCtrlClick = false;
+  document.addEventListener("keydown", (e) => {
+    isCtrlClick = e.ctrlKey;
+    e.preventDefault();
+  });
+  document.addEventListener("keyup", (e) => {
+    const code = e.keyCode;
+   
+    if (isCtrlClick && code !== 17) {
+      store.commit("common/saveShortcutKey", {
+        ...KeyCodeMap[e.keyCode],
+        updateTime:moment().valueOf()
       });
-      document.addEventListener("keyup", (e) => {
-        if (isCtrlClick) {
-          console.log(e.keyCode,'e.keyCode')
-          this.$store.commit("common/saveShortcutKey", KeyCodeMap[e.keyCode]);
-          e.preventDefault()
-        }
-      });
-    },
-  },
+      e.preventDefault();
+    }
+  });
 };
 </script>
 

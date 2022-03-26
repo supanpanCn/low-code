@@ -31,6 +31,16 @@
         <ConfigWrapper />
       </el-col>
     </el-row>
+
+    <!-- 提示区域 -->
+    <el-row class="tipsBox">
+      <el-col>
+        <span class="tit">快捷键：</span>
+        <span v-for="v in state.keyCodes" :key="v.value"
+          >{{ v.label }}（{{ v.value }}）</span
+        >
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>
@@ -39,13 +49,14 @@ export default {
 };
 </script>
 <script setup>
-import { ref, reactive, onMounted, provide, watch } from "vue";
+import { ref, reactive, onMounted, provide, watch, toRaw } from "vue";
 import { useStore } from "vuex";
 import TopBar from "./../fragments/main/topBar";
 import Stock from "../fragments/main/stock.vue";
 import CanvasArea from "../fragments/main/canvasArea.vue";
 import ConfigWrapper from "../fragments/main/configWrapper.vue";
 import moment from "moment";
+import useShortcut from "hooks/useShortcut";
 import {
   createNode,
   createInitialSchame,
@@ -58,6 +69,8 @@ import {
   isSameTree,
   getPooints,
   getRelativePos,
+  KeyCodeMap,
+  findById,
 } from "~utils";
 const state = reactive({
   jsonSchema: createInitialSchame(),
@@ -65,11 +78,53 @@ const state = reactive({
   stack: [],
   memo: {},
   active: false,
+  keyCodes: [],
+  coping: false,
 });
 const store = useStore();
 
+useShortcut({
+  copy: () => {
+    if (!store.state.common.saveActiveSublineId) {
+      showMsg("请选择要复制的组件");
+      return;
+    }
+    state.coping = true;
+    showMsg("已复制", "success");
+  },
+  paste: () => {
+    if (!state.coping) {
+      showMsg("没有要粘贴的组件");
+      return;
+    }
+    const { jsonSchema } = state;
+    const { componentsTree: tree } = jsonSchema;
+    const { node, parentNode } = findById(
+      tree,
+      store.state.common.saveActiveSublineId
+    );
+    
+    const { layout = {} ,type} = node;
+    const { x, y } = layout.attr || {};
+    if (parentNode) {
+      if (!Array.isArray(parentNode.children)) {
+        parentNode.children = [];
+      }
+      parentNode.children.push(createNode(type, {
+        attr: {
+          x:x+60,
+          y,
+        },
+      }))
+      state.coping = false
+      state.updateKey++;
+    }
+  },
+});
+
 onMounted(() => {
   store.commit("common/saveMenuAndBarElementInfo", getRelativePos());
+  state.keyCodes = Object.values(KeyCodeMap);
 });
 
 const onCreated = () => {
@@ -160,20 +215,7 @@ const handleDrop = (e) => {
     const { x, y } = getPooints(e);
     const { uid } = getNearestContainerId(e);
     const stack = [tree];
-    let schameNode = null;
-    while (stack.length) {
-      const node = stack.shift();
-      if (node.uid === uid) {
-        stack.length = 0;
-        schameNode = node;
-      } else {
-        if (Array.isArray(node.children)) {
-          for (let i = 0; i < node.children.length; i++) {
-            stack.push(node.children[i]);
-          }
-        }
-      }
-    }
+    let { node: schameNode } = findById(tree, uid);
     if (!Array.isArray(schameNode.children)) {
       schameNode.children = [];
     }
@@ -191,6 +233,7 @@ const handleDrop = (e) => {
 // 派发给子孙组件的函数
 provide("removeNode", handleRemoveNode);
 </script>
+
 <style lang="less" scoped>
 .mainWrapper {
   width: 100%;
@@ -199,7 +242,7 @@ provide("removeNode", handleRemoveNode);
     height: 50px;
   }
   .mainBox {
-    height: calc(100% - 50px);
+    height: calc(100% - 80px);
     #root {
       height: 100%;
       box-sizing: border-box;
@@ -210,6 +253,14 @@ provide("removeNode", handleRemoveNode);
         display: block;
         border-top: 1px solid #ccc;
       }
+    }
+  }
+  .tipsBox {
+    height: 30px;
+    border: 1px solid #ccc;
+    line-height: 30px;
+    .tit {
+      color: red;
     }
   }
 }

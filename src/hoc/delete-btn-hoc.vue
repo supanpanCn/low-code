@@ -50,7 +50,6 @@ export default {
   }),
   watch: {
     sublineId: function (id) {
-      console.log(this.uid === id, "this.uid === id");
       this.isShowSubline = this.uid === id;
     },
     isShowSubline: function (isShow) {
@@ -111,6 +110,7 @@ export default {
         this.actInstance.update("isShowDelete");
         this.actInstance.attach(this);
       }
+      this.$store.commit("common/saveActiveSublineId", this.uid);
       this.isShowSubline = true;
       this.isShowDelete = true;
       this.$nextTick(() => {

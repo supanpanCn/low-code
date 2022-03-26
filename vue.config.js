@@ -7,5 +7,6 @@ module.exports = {
         .set('@',path.join(__dirname,'src'))
         .set('~utils',path.join(__dirname,'src/utils'))
         .set('ui',path.join(__dirname,'src/components'))
+        .set('hooks',path.join(__dirname,'src/hooks'))
     }
 }

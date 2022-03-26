@@ -1,17 +1,25 @@
 import { ElMessage } from 'element-plus';
 import { uiMap, attrMap } from './inner'
 export const KeyCodeMap = {
-    90:{
-        label:'撤销',
-        value:'ctrl+z'
+    90: {
+        label: '撤销',
+        value: 'ctrl+z'
     },
-    17:{
-        label:'历史',
-        value:'ctrl+x'
+    72: {
+        label: '历史',
+        value: 'ctrl+x'
     },
-    83:{
-        label:'保存',
-        value:'ctrl+s'
+    83: {
+        label: '保存',
+        value: 'ctrl+s'
+    },
+    67: {
+        label: '复制',
+        value: 'ctrl+c'
+    },
+    86: {
+        label: '粘贴',
+        value: 'ctrl+v'
     }
 }
 // px转数字
@@ -197,7 +205,7 @@ export const isSameTree = (p, q) => {
     return p.children.every((v, i) => isSameTree(v, q.children[i]))
 }
 // 获取最近节点
-export const getNearestPoint = (tree,distance,e) => {
+export const getNearestPoint = (tree, distance, e) => {
     const { children = [], layout = {}, type } = tree;
     const { attr = {} } = layout;
     const { x = 0, y = 0 } = attr;
@@ -209,9 +217,32 @@ export const getNearestPoint = (tree,distance,e) => {
         res = tree;
     }
     for (let i = 0; i < children.length && !res; i++) {
-        res = getNearestPoint(children[i],distance,e);
+        res = getNearestPoint(children[i], distance, e);
     }
     return res;
 }
-
+// 根据id查找节点
+export const findById = (tree,uid) => {
+    const stack = [tree];
+    let currentNode = null;
+    let parentNode = null
+    while (stack.length) {
+        const node = stack.shift();
+        if (node.uid === uid) {
+            stack.length = 0;
+            currentNode = node;
+        } else {
+            if (Array.isArray(node.children) && node.children.length) {
+                parentNode = node
+                for (let i = 0; i < node.children.length; i++) {
+                    stack.push(node.children[i]);
+                }
+            }
+        }
+    }
+    return {
+        node:currentNode,
+        parentNode
+    }
+}
 
