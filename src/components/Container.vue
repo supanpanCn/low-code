@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="{ draging: draging,uiContainer:true }"
+    :class="{ draging: draging, uiContainer: true }"
     :uid="uid"
     data-id="uiContainer"
     @dragover.prevent
@@ -13,29 +13,25 @@ import { Observer, Center } from "~utils";
 export default {
   name: "uiContainer",
   props: {
-    pIndex: {
+    uid: {
       type: String,
-      default: "0"
+      default: "-1",
     },
-    id: {
-      type: String,
-      default: "-1"
-    }
   },
   data() {
     return {
       draging: false,
-      schame: null
+      schame: null,
     };
   },
   methods: {
     updateDraging(dragStatus) {
       this.draging = dragStatus;
-    }
+    },
   },
   mounted() {
     new Observer(this, Center.getInstance());
-  }
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -48,7 +44,7 @@ export default {
   flex-wrap: wrap;
   position: relative;
   &.draging {
-    background:rgba(135, 135, 160,.3) ;
+    background: rgba(135, 135, 160, 0.3);
   }
 }
 </style>

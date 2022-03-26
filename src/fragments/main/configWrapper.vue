@@ -26,9 +26,6 @@ export default {
       currentComponent:uiConfig['uiButtonConfig']
     }
   },
-  mounted() {
-    console.log(uiConfig, "uiConfig");
-  },
 };
 </script>
 

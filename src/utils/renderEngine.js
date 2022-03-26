@@ -1,6 +1,7 @@
-import { parsers } from "ui";
+import { uiComponents } from "ui";
 import { parseUrlParams, createInitialSchame, uiPrefix } from '~utils'
 import DeleteHoc from '../hoc/delete-btn-hoc'
+import { h } from 'vue'
 // 渲染引擎
 export default {
     name: 'renderEngine',
@@ -11,8 +12,8 @@ export default {
                 return createInitialSchame()
             }
         },
-        updateKey:{
-            type:Number
+        updateKey: {
+            type: Number
         }
     },
     data() {
@@ -22,8 +23,8 @@ export default {
             renderFunc: null,
         }
     },
-    watch:{
-        updateKey:function(){
+    watch: {
+        updateKey: function () {
             this.init()
         }
     },
@@ -36,6 +37,11 @@ export default {
             this.pageParams = parseUrlParams(this.jsonSchema.query)
             this.layout = layout
             this.tree = componentsTree
+        },
+        _h(realCom, children, tree) {
+            return h(realCom, {
+                uid: tree.uid,
+            }, children)
         },
         renderTree(tree) {
             let _children = null
@@ -50,24 +56,24 @@ export default {
         },
         renderRealComponent(tree, children) {
             const t = uiPrefix + tree.type
-            const realCom = parsers[t]
+            const realCom = uiComponents[t]
             if (realCom) {
                 if (tree.isRoot) {
-                    return realCom.render(tree, children)
+                    return this._h(realCom, children, tree)
                 }
                 return <DeleteHoc tree={tree} key={tree.uid}>
-                    {realCom.render(tree, children)}
+                    {this._h(realCom, children, tree)}
                 </DeleteHoc>
             }
             return null
         }
     },
     render() {
-        return <div id='root' style={{position:'relative'}}>
+        return <div id='root' style={{ position: 'relative' }}>
             {this.renderTree(this.tree)}
         </div>
     },
     components: {
-        ...parsers
+        ...uiComponents
     },
 }

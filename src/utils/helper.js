@@ -34,7 +34,7 @@ export const uiFlag = {
     ROOT: 'canvas',
     CONTAINER: 'uiContainer',
 }
-export const uiPrefix = 'enchanceUi'
+export const uiPrefix = 'ui'
 // 将组件name映射为中文
 export const parseUiName = (name) => {
     return uiMap[name]

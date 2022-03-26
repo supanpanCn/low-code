@@ -6,30 +6,34 @@
         <el-tooltip effect="dark" content="撤销" placement="bottom">
           <div
             :class="['revoke', 'item', active ? 'act' : '']"
-            @click="active && $emit('revocation')"
+            @click="props.active && $emit('revocation')"
           ></div>
         </el-tooltip>
         <el-tooltip effect="dark" content="历史" placement="bottom">
           <div
             :class="['past', 'item', memo.length ? 'act' : '']"
-            @click="visible = !!memo.length"
+            @click="state.visible = !!props.memo.length"
           ></div>
         </el-tooltip>
         <el-tooltip effect="dark" content="保存" placement="bottom">
-          <div class="save item" @click="active && $emit('save')"></div>
+          <div class="save item" @click="props.active && $emit('save')"></div>
         </el-tooltip>
       </div>
-      <div class="user">{{ userName }}</div>
+      <div class="user">{{ state.userName }}</div>
       <el-dialog
-        v-model="visible"
+        v-model="state.visible"
         title="历史"
         width="30%"
         custom-class="top-bar-modal"
         :before-close="handleClose"
       >
-        <el-select v-model="selectItem" placeholder="请选择历史" size="large">
+        <el-select
+          v-model="state.selectItem"
+          placeholder="请选择历史"
+          size="large"
+        >
           <el-option
-            v-for="item in options"
+            v-for="item in state.options"
             :key="item"
             :label="item"
             :value="item"
@@ -37,7 +41,7 @@
         </el-select>
         <template #footer>
           <span class="dialog-footer">
-            <el-button @click="visible = false">取消</el-button>
+            <el-button @click="state.visible = false">取消</el-button>
             <el-button type="primary" @click="handleConfirm">确认</el-button>
           </span>
         </template>
@@ -45,55 +49,51 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
+import { reactive, watch, defineProps, computed, defineEmits } from "vue";
 import { showMsg } from "~utils";
-import { mapState } from "vuex";
-export default {
-  name: "TopBar",
-  props: ["memo", "active"],
-  data() {
-    return {
-      userName: "三岁就会写bug",
-      visible: false,
-      options: [],
-      selectItem: undefined,
-    };
-  },
-  computed: mapState({
-    shortcutKeyInfo: ({ common }) => common.shortcutKeyInfo,
-  }),
-  watch: {
-    visible: function (value) {
-      if (value) {
-        this.options = Object.keys(this.memo.memos);
-      }
-    },
-    shortcutKeyInfo: function (info) {
-      const { label } = info || {};
-      switch (label) {
-        case "撤销":
-          this.active && this.$emit("revocation");
-          break;
-        case "历史":
-          this.visible = !!this.memo.length;
-          break;
-        case "保存":
-          // this.active && this.$emit('save')
-          break;
-      }
-    },
-  },
-  methods: {
-    handleConfirm() {
-      if (!this.selectItem) {
-        showMsg("请选择");
-        return;
-      }
-      let schameTree = this.memo.getMemo(this.selectItem);
-      this.$emit("back", schameTree);
-      this.visible = false;
-    },
-  },
+import { useStore } from "vuex";
+const state = reactive({
+  userName: "三岁就会写bug",
+  visible: false,
+  options: [],
+  selectItem: undefined,
+});
+const emit = defineEmits(["back", "revocation", "save"]);
+const store = useStore();
+const shortcutKeyInfo = computed(()=>store.state.common.shortcutKeyInfo);
+const props = defineProps(["memo", "active"]);
+watch(
+  () => state.visible,
+  (visible) => {
+    if (visible) {
+      state.options = Object.keys(props.memo.memos);
+    }
+  }
+)
+watch(shortcutKeyInfo, (info) => {
+  if (info) {
+    const { label } = info || {};
+    switch (label) {
+      case "撤销":
+        props.active && emit("revocation");
+        break;
+      case "历史":
+        state.visible = !!props.memo.length;
+        break;
+      case "保存":
+        props.active && emit("save");
+        break;
+    }
+  }
+});
+const handleConfirm = () => {
+  if (!state.selectItem) {
+    showMsg("请选择");
+    return;
+  }
+  let schameTree = props.memo.getMemo(state.selectItem);
+  state.visible = false;
 };
 </script>
 <style lang="less" scoped>
