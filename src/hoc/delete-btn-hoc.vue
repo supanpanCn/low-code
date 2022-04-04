@@ -8,12 +8,13 @@
     ref="child"
   >
     <div class="delete" @click="handleDelete" v-if="isShowDelete"></div>
-
     <teleport to="body" v-if="isShowSubline">
       <div ref="subline-x"></div>
       <div ref="subline-y"></div>
     </teleport>
-    <slot />
+    <drag-hoc :tree="tree" :setUpKey="()=>upKey++">
+      <slot />
+    </drag-hoc>
   </div>
 </template>
 <script>
@@ -29,6 +30,7 @@ import {
   getNearestContainerId,
 } from "~utils";
 import { mapState } from "vuex";
+import DragHoc from './drag-hoc.vue'
 export default {
   name: "deleteBtnHoc",
   props: ["tree"],
@@ -41,6 +43,7 @@ export default {
       type: this.tree.type,
       attribute: {},
       isShowSubline: false,
+      upKey:0
     };
   },
   computed: mapState({
@@ -59,7 +62,9 @@ export default {
         });
       }
     },
-    
+    upKey:function(){
+      this.setDynamicWrapperStyle();
+    }
   },
   mounted() {
     this.actInstance = ActiveList.getInstance();
@@ -67,7 +72,6 @@ export default {
     EventBus.on(this.uid, (e) => {
       this.handleActivate(e);
     });
-    
   },
   methods: {
     setDynamicWrapperStyle() {
@@ -130,6 +134,9 @@ export default {
       this.removeNode(this.uid);
     },
   },
+  components:{
+    DragHoc
+  }
 };
 </script>
 <style lang="less" scoped>

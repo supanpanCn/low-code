@@ -22,7 +22,6 @@ const registerShortcutKey = () => {
   });
   document.addEventListener("keyup", (e) => {
     const code = e.keyCode;
-   
     if (isCtrlClick && code !== 17) {
       store.commit("common/saveShortcutKey", {
         ...KeyCodeMap[e.keyCode],

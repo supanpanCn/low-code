@@ -83,6 +83,7 @@ const state = reactive({
 });
 const store = useStore();
 
+// 快捷键
 useShortcut({
   copy: () => {
     if (!store.state.common.saveActiveSublineId) {
@@ -194,12 +195,25 @@ const handleRemoveNode = (uid) => {
   del(tree.children);
   state.updateKey++;
 };
+// 更新节点
+const handleUpdateNode = (uid,{x,y})=>{
+  const { jsonSchema } = state;
+  const { componentsTree: tree } = jsonSchema;
+  let { node: schameNode } = findById(tree, uid);
+  const {layout:{
+    attr
+  }} = schameNode
+  attr.x = x
+  attr.y = y
+  state.updateKey++;
+}
 // 拖拽生成节点
 const handleDrop = (e) => {
   const { jsonSchema } = state;
   const { componentsTree: tree } = jsonSchema;
   // 判断是否存在交互组件
   const uiName = e.dataTransfer.getData("ui-component-name");
+  if(!uiName) return
   if (!tree.type && uiName !== uiFlag.CONTAINER) {
     showMsg("请选择交互组件");
     return;
@@ -212,6 +226,7 @@ const handleDrop = (e) => {
     tree.isRoot = true;
     tree.children = [];
   } else {
+    
     const { x, y } = getPooints(e);
     const { uid } = getNearestContainerId(e);
     const stack = [tree];
@@ -232,6 +247,7 @@ const handleDrop = (e) => {
 };
 // 派发给子孙组件的函数
 provide("removeNode", handleRemoveNode);
+provide("updateNode", handleUpdateNode);
 </script>
 
 <style lang="less" scoped>

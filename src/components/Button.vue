@@ -1,5 +1,5 @@
-<template>
-  <el-button data-id="uiButton">{{ text }}</el-button>
+<template> 
+  <el-button data-id="uiButton" >{{ text }}</el-button>
 </template>
 <script>
 export default {
