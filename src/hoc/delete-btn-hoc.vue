@@ -24,7 +24,7 @@ import {
   EventBus,
   pxToNumber,
   parseLayout,
-  getRootElement,
+  getRootElementInfo,
   objToStr,
   setSubline,
   getNearestContainerId,
@@ -76,7 +76,7 @@ export default {
   methods: {
     setDynamicWrapperStyle() {
       const wrapper = this.$refs.child;
-      const childElement = wrapper.children[0];
+      const childElement = wrapper.children[wrapper.children.length-1].children[0];
       if (childElement.dataset.id !== uiFlag.CONTAINER) {
         const { width } = getComputedStyle(childElement);
         const w = width ? pxToNumber(width) : 180;
@@ -90,7 +90,7 @@ export default {
         this.attribute = attribute;
       } else {
         const { el } = getNearestContainerId(wrapper);
-        const { width } = getRootElement();
+        const { width } = getRootElementInfo();
         const children = el.children;
         const { barHeight } = this.barAndMenuInfo;
         let lowest = barHeight;

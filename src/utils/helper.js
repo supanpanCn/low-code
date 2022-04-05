@@ -1,5 +1,6 @@
 import { ElMessage } from 'element-plus';
 import { uiMap, attrMap } from './inner'
+import {getRootElementInfo,getRelativePos} from './document'
 export const KeyCodeMap = {
     90: {
         label: '撤销',
@@ -22,21 +23,12 @@ export const KeyCodeMap = {
         value: 'ctrl+v'
     }
 }
+
 // px转数字
 export const pxToNumber = (px) => {
     return px.replace('px', '') * 1
 }
-// 获取物料和顶栏宽高
-export const getRelativePos = () => {
-    const menuWrapper = document.getElementsByClassName('stockWrapper')[0]
-    const barWrapper = document.getElementsByClassName('topBarWrapper')[0]
-    const { width } = getComputedStyle(menuWrapper)
-    const { height } = getComputedStyle(barWrapper)
-    return {
-        menuWidth: width,
-        barHeight: height
-    }
-}
+
 // 关键组件标识
 export const uiFlag = {
     ROOT: 'canvas',
@@ -79,25 +71,9 @@ export const createNode = (nodeName, layout) => {
         uid: getUuid()
     };
 }
-// 获取交互组件
-export const getNearestContainerId = (e) => {
-    let node = e.target || e
-    while (!node.className.includes(uiFlag.CONTAINER)) {
-        node = node.parentNode
-    }
-    return {
-        uid: node.getAttribute('uid'),
-        el: node
-    }
-}
 
-// 获取物料在画布中的位置
-export const getPooints = (e) => {
-    return {
-        x: e.clientX,
-        y: e.clientY,
-    }
-}
+
+
 // 解析layout
 export const parseLayout = (layout, config) => {
     const { attr } = layout
@@ -125,18 +101,10 @@ export const parseLayout = (layout, config) => {
         attribute
     }
 }
-// 获取根元素
-export const getRootElement = () => {
-    const root = document.getElementById("root");
-    const { width, height } = getComputedStyle(root);
-    return {
-        width,
-        height
-    }
-}
+
 // 设置辅助线
 export const setSubline = function (attribute) {
-    const { width, height } = getRootElement();
+    const { width, height } = getRootElementInfo();
     const { menuWidth, barHeight } = getRelativePos();
     const { top, left } = attribute
     this.$refs["subline-x"].style = objToStr({
@@ -222,7 +190,7 @@ export const getNearestPoint = (tree, distance, e) => {
     return res;
 }
 // 根据id查找节点
-export const findById = (tree,uid) => {
+export const findById = (tree, uid) => {
     const stack = [tree];
     let currentNode = null;
     let parentNode = null
@@ -241,8 +209,25 @@ export const findById = (tree,uid) => {
         }
     }
     return {
-        node:currentNode,
+        node: currentNode,
         parentNode
     }
 }
-
+// 深拷贝
+export const deepCopy = target => {
+    if (target && typeof target === 'object') {
+      const result = Array.isArray(target) ? [] : {};
+      for (const k in target) {
+        if (typeof target[k] === 'object') {
+          result[k] = deepCopy(target[k])
+        }
+        else {
+          result[k] = target[k]
+        }
+      }
+  
+      return result
+    }
+  
+    return target
+  }

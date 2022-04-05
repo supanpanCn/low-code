@@ -7,7 +7,8 @@ function initialData() {
         },
         tree: {},
         saveActiveSublineId: '',
-        shortcutKeyInfo: ''
+        shortcutKeyInfo: '',
+        dragingElementInfo:{},
     }
 }
 export default {
@@ -22,6 +23,9 @@ export default {
         // }
     },
     mutations: {
+        saveDragingElementInfo(state, payload) {
+            state.dragingElementInfo = payload
+        },
         saveMenuAndBarElementInfo(state, payload) {
             state.barAndMenuInfo = {
                 ...payload

@@ -20,11 +20,13 @@
       </el-col>
       <!-- 画布 -->
       <el-col :span="16">
-        <CanvasArea
-          :jsonSchema="state.jsonSchema"
-          :updateKey="state.updateKey"
-          @drop="handleDrop"
-        />
+        <snapAlignHoc>
+          <CanvasArea
+            :jsonSchema="state.jsonSchema"
+            :updateKey="state.updateKey"
+            @drop="handleDrop"
+          />
+        </snapAlignHoc>
       </el-col>
       <!-- 控制面板 -->
       <el-col :span="5">
@@ -57,6 +59,7 @@ import CanvasArea from "../fragments/main/canvasArea.vue";
 import ConfigWrapper from "../fragments/main/configWrapper.vue";
 import moment from "moment";
 import useShortcut from "hooks/useShortcut";
+import snapAlignHoc from "../hoc/snap-align-hoc.vue";
 import {
   createNode,
   createInitialSchame,
@@ -67,10 +70,12 @@ import {
   MemoList,
   Stack,
   isSameTree,
-  getPooints,
+  getElementInfo,
   getRelativePos,
   KeyCodeMap,
   findById,
+  deepCopy,
+  getElementByUid,
 } from "~utils";
 const state = reactive({
   jsonSchema: createInitialSchame(),
@@ -104,20 +109,36 @@ useShortcut({
       tree,
       store.state.common.saveActiveSublineId
     );
-    
-    const { layout = {} ,type} = node;
+    const { layout = {}, type } = node;
     const { x, y } = layout.attr || {};
     if (parentNode) {
       if (!Array.isArray(parentNode.children)) {
         parentNode.children = [];
       }
-      parentNode.children.push(createNode(type, {
-        attr: {
-          x:x+60,
-          y,
-        },
-      }))
-      state.coping = false
+      const { uid } = node;
+      const { uid: parentUid } = parentNode;
+      const element = getElementByUid(uid);
+      const parentElement = getElementByUid(parentUid);
+      const { width, height } = getElementInfo({
+        target: element,
+      });
+      const { width: parentWeidht, height: parentHeight } = getElementInfo({
+        target: parentElement,
+      });
+      let newW = x + width + 5;
+      if (newW > parentWeidht) {
+        showMsg("无效复制");
+        return;
+      }
+      parentNode.children.push(
+        createNode(type, {
+          attr: {
+            x: newW,
+            y,
+          },
+        })
+      );
+      state.coping = false;
       state.updateKey++;
     }
   },
@@ -140,12 +161,12 @@ watch(
     const { jsonSchema, stack } = state;
     const tree = jsonSchema.componentsTree;
     if (tree.type) {
-      stack.push(JSON.parse(JSON.stringify(tree)));
+      stack.push(deepCopy(tree));
       state.active = !!tree.children.length;
     } else {
       state.active = false;
     }
-    store.commit("common/saveTreeData", JSON.parse(JSON.stringify(tree)));
+    store.commit("common/saveTreeData", deepCopy(tree));
   }
 );
 
@@ -161,7 +182,7 @@ const handleSave = () => {
         return;
       }
     }
-    memo.setMemo(key, JSON.parse(JSON.stringify(tree)));
+    memo.setMemo(key, deepCopy(tree));
     showMsg("保存成功", "success");
   }
 };
@@ -196,24 +217,24 @@ const handleRemoveNode = (uid) => {
   state.updateKey++;
 };
 // 更新节点
-const handleUpdateNode = (uid,{x,y})=>{
+const handleUpdateNode = (uid, { x, y }) => {
   const { jsonSchema } = state;
   const { componentsTree: tree } = jsonSchema;
   let { node: schameNode } = findById(tree, uid);
-  const {layout:{
-    attr
-  }} = schameNode
-  attr.x = x
-  attr.y = y
+  const {
+    layout: { attr },
+  } = schameNode;
+  attr.x = x;
+  attr.y = y;
   state.updateKey++;
-}
+};
 // 拖拽生成节点
 const handleDrop = (e) => {
   const { jsonSchema } = state;
   const { componentsTree: tree } = jsonSchema;
   // 判断是否存在交互组件
   const uiName = e.dataTransfer.getData("ui-component-name");
-  if(!uiName) return
+  if (!uiName) return;
   if (!tree.type && uiName !== uiFlag.CONTAINER) {
     showMsg("请选择交互组件");
     return;
@@ -226,8 +247,7 @@ const handleDrop = (e) => {
     tree.isRoot = true;
     tree.children = [];
   } else {
-    
-    const { x, y } = getPooints(e);
+    const { x, y } = getElementInfo(e);
     const { uid } = getNearestContainerId(e);
     const stack = [tree];
     let { node: schameNode } = findById(tree, uid);
@@ -259,15 +279,19 @@ provide("updateNode", handleUpdateNode);
   }
   .mainBox {
     height: calc(100% - 80px);
-    #root {
+    .snap-align {
       height: 100%;
       box-sizing: border-box;
-
-      :deep > .uiContainer:nth-of-type(1) {
+      #root {
         height: 100%;
         box-sizing: border-box;
-        display: block;
-        border-top: 1px solid #ccc;
+
+        :deep > .uiContainer:nth-of-type(1) {
+          height: 100%;
+          box-sizing: border-box;
+          display: block;
+          border-top: 1px solid #ccc;
+        }
       }
     }
   }

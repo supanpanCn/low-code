@@ -10,6 +10,8 @@
 import { parsers } from "ui";
 import { hasLen } from "~utils";
 import renderEngine from "~utils/renderEngine";
+import snapAlignHoc from '../../hoc/snap-align-hoc.vue'
+import SnapAlignHoc from '../../hoc/snap-align-hoc.vue';
 export default {
   name: "canvasArea",
   props: {
@@ -32,7 +34,7 @@ export default {
   },
   components: {
     ...parsers,
-    renderEngine,
+    renderEngine
   },
 };
 </script>
